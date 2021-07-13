@@ -1,6 +1,6 @@
 # srp-go
 
-Serve a random image on `/` with a dynamic background color, and let users upload and browse on `/upload` / `/browse`. 
+Serve a random image on `/` with a dynamic background color, let users upload on `/upload` and browse a gallery on `/browse`.
 
 ## Usage:
 
