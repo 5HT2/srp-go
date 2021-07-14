@@ -1,1 +1,29 @@
-This is the upload page
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>SERVER_NAME</title>
+    <link rel="icon" type="image/png" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css">
+    <meta name="viewport" content="width=device-width,height=device-height,initial-scale=1">
+    <script>
+        function setup() {
+            document.getElementById('buttonid').addEventListener('click', openDialog);
+            function openDialog() {
+                document.getElementById('fileid').click();
+            }
+            document.getElementById('fileid').addEventListener('change', submitForm);
+            function submitForm() {
+                document.getElementById('formid').submit();
+            }
+        }
+    </script>
+</head>
+<body onload="setup()">
+<form id='formid' action="/api/upload" method="POST" enctype="multipart/form-data">
+    <input id='fileid' type='file' name='file' hidden/>
+    <input id='buttonid' type='button' value='Upload MB'/>
+    <input type='submit' value='Submit' />
+</form>
+</body>
+</html>

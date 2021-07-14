@@ -15,18 +15,20 @@ import (
 )
 
 var (
-	addr        = flag.String("addr", "localhost:6060", "TCP address to listen to")
-	serverName  = flag.String("servername", "srp-go-a", "Default server name")
-	useTls      = flag.Bool("tls", false, "Whether to enable TLS")
-	tlsCert     = flag.String("cert", "", "Full certificate file path")
-	tlsKey      = flag.String("key", "", "Full key file path")
-	maxBodySize = flag.Int("maxbodysize", 100*1024*1024, "MaxRequestBodySize, defaults to 100MiB")
+	addr         = flag.String("addr", "localhost:6060", "TCP address to listen to")
+	serverName   = flag.String("servername", "srp-go-a", "Default server name")
+	useTls       = flag.Bool("tls", false, "Whether to enable TLS")
+	tlsCert      = flag.String("cert", "", "Full certificate file path")
+	tlsKey       = flag.String("key", "", "Full key file path")
+	maxImgLength = flag.Int("maximglength", 2000, "Maximum image height and width")
+	maxBodySize  = flag.Int("maxbodysize", 100*1024*1024, "MaxRequestBodySize, defaults to 100MiB")
 
 	images                    = UpdateImageCache()
 	currentImage, currentHash = GetRandomImage()
 	currentImageColor         = "000000"
 	currentCss                = ""
 	currentHtml               = ""
+	apiPath                   = []byte("/api/")
 	rootPath                  = []byte("/")
 	imgPath                   = []byte("/image")
 	faviconPath               = []byte("/favicon.ico")
@@ -92,10 +94,14 @@ func requestHandler(ctx *fasthttp.RequestCtx) {
 	case bytes.Equal(path, faviconPath):
 		ctx.Response.Header.SetStatusCode(fasthttp.StatusNotFound)
 
-	// Serve css on /css/
-	case bytes.HasPrefix(path, cssPath):
+	// Serve css on /css/style.css
+	case bytes.Equal(path, cssPath):
 		ctx.Response.Header.Set("Content-Type", "text/css; charset=utf-8")
 		_, _ = fmt.Fprint(ctx, currentCss)
+
+	// Handle the api on /api/
+	case bytes.HasPrefix(path, apiPath):
+		HandleApi(ctx)
 
 	// Default to serving html on all other paths
 	default:
