@@ -7,6 +7,7 @@ WORKDIR /srp-go
 
 RUN apt-get update && apt-get install -y \
     libvips \
+    libvips-dev \
  && rm -rf /var/lib/apt/lists/*
 
 RUN go build -o srp-bin .
