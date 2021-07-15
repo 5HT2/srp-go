@@ -1,13 +1,35 @@
+input[type='file'] {
+    color: transparent;
+}
+
 .main-form {
+    position: relative;
     box-sizing: content-box;
     border: transparent;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-top: 10%;
+    margin-top: 15px;
+}
+
+.browse-button {
+    min-width: 114px;
+    width: 114px;
+    display: none;
+    margin-right: 10px;
 }
 
 .output-img {
-    max-height: 50%;
-    max-width: 50%;
+    margin-top: 10px;
+    max-height: 80%;
+    max-width: 33%;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+@media (max-width: 800px) {
+    .output-img {
+        max-width: 90%;
+    }
 }
