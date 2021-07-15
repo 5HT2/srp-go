@@ -1,3 +1,4 @@
+/* hide file name text in file picker */
 input[type='file'] {
     color: transparent;
 }
@@ -20,7 +21,7 @@ input[type='file'] {
 }
 
 .output-img {
-    margin-top: 10px;
+    margin-top: 15px;
     max-height: 80%;
     max-width: 33%;
     position: absolute;
