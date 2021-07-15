@@ -16,7 +16,6 @@ import (
 
 var (
 	addr         = flag.String("addr", "localhost:6060", "TCP address to listen to")
-	serverName   = flag.String("servername", "srp-go-a", "Default server name")
 	useTls       = flag.Bool("tls", false, "Whether to enable TLS")
 	tlsCert      = flag.String("cert", "", "Full certificate file path")
 	tlsKey       = flag.String("key", "", "Full key file path")
@@ -47,7 +46,6 @@ func main() {
 	flag.Parse()
 	log.Print("- Loading srp-go")
 	go StartPolling()
-	UpdateCurrentHtml()
 	MkImageFolder()
 
 	protocol := "http"
@@ -82,6 +80,7 @@ func requestHandler(ctx *fasthttp.RequestCtx) {
 	switch {
 	// Serve index.html on /
 	case bytes.Equal(path, rootPath):
+		UpdateCurrentHtml(ctx)
 		ctx.Response.Header.Set("Content-Type", "text/html; charset=utf-8")
 		_, _ = fmt.Fprint(ctx, currentHtml)
 
@@ -138,12 +137,14 @@ func UpdateCurrentCss() {
 }
 
 // UpdateCurrentHtml updates currentHtml with SERVER_NAME replaced with *serverName
-func UpdateCurrentHtml() {
-	content, err := ioutil.ReadFile("www/html/index.html")
-	if err != nil {
-		log.Fatal(err)
-	}
+func UpdateCurrentHtml(ctx *fasthttp.RequestCtx) {
+	if len(currentHtml) == 0 {
+		content, err := ioutil.ReadFile("www/html/index.html")
+		if err != nil {
+			log.Fatal(err)
+		}
 
-	contentStr := strings.Replace(string(content), "SERVER_NAME", *serverName, 2)
-	currentHtml = contentStr
+		contentStr := strings.Replace(string(content), "SERVER_NAME", string(ctx.Host()), 2)
+		currentHtml = contentStr
+	}
 }
