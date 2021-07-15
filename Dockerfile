@@ -5,6 +5,7 @@ ADD . /srp-go
 RUN mkdir /srp-go/www/images
 WORKDIR /srp-go
 
+RUN apt-get update -y && apt-get install -y libvips
 RUN go build -o srp-bin .
 
 ENV ADDRESS "localhost:6060"
