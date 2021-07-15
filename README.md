@@ -21,6 +21,7 @@ TODO
 - [ ] Add usage instructions
 - [ ] Finish `/upload` page
 - [ ] Finish `/browse` page
+- [ ] Add authentication for uploading
 - [ ] Cleanup error handling
 - [ ] Issues with missing folder on startup
   - [ ] Issues with no files on startup
