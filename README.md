@@ -27,3 +27,4 @@ TODO
   - [ ] Issues with no files on startup
 - [ ] Issues with missing tmp folder
 - [ ] Issues with safety when deleting an image
+- [ ] Fix image color selection

@@ -4,10 +4,10 @@ import (
 	"time"
 )
 
-// StartPolling will run a few functions every half second
+// StartPolling will run a few functions every second
 func StartPolling() {
-	for { // 0.5 seconds
-		time.Sleep(500 * time.Millisecond)
+	for {
+		time.Sleep(1 * time.Second)
 		go UpdateCurrentImage()
 		go UpdateCurrentCss()
 	}
