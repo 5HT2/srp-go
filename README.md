@@ -19,7 +19,7 @@ TODO
   - [ ] Add codefactor
   - [ ] Add badges
 - [ ] Add usage instructions
-- [ ] Finish `/upload` page
+- [x] Finish `/upload` page
 - [ ] Finish `/browse` page
 - [ ] Add authentication for uploading
 - [ ] Cleanup error handling
