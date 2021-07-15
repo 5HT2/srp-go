@@ -28,13 +28,15 @@ var (
 	currentImageColor         = "000000"
 	currentCss                = ""
 	currentHtml               = ""
-	apiPath                   = []byte("/api/")
 	rootPath                  = []byte("/")
+	cssPath                   = []byte("/css/")
+	apiPath                   = []byte("/api/")
 	imgPath                   = []byte("/image")
 	faviconPath               = []byte("/favicon.ico")
-	cssPath                   = []byte("/css/style.css")
+	rootStylePath             = []byte("/css/style.css")
 
 	imgHandler   = ImageHandler("www/images")
+	cssHandler   = fasthttp.FSHandler("www/css", 1)
 	filesHandler = fasthttp.FSHandler("www/html", 0)
 
 	rSrc = rand.NewSource(time.Now().Unix())
@@ -95,9 +97,13 @@ func requestHandler(ctx *fasthttp.RequestCtx) {
 		ctx.Response.Header.SetStatusCode(fasthttp.StatusNotFound)
 
 	// Serve css on /css/style.css
-	case bytes.Equal(path, cssPath):
+	case bytes.Equal(path, rootStylePath):
 		ctx.Response.Header.Set("Content-Type", "text/css; charset=utf-8")
 		_, _ = fmt.Fprint(ctx, currentCss)
+
+	// Handle alternate css styles on /css/
+	case bytes.HasPrefix(path, cssPath):
+		cssHandler(ctx)
 
 	// Handle the api on /api/
 	case bytes.HasPrefix(path, apiPath):

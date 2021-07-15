@@ -43,6 +43,7 @@ func handleUpload(ctx *fasthttp.RequestCtx) {
 			return
 		}
 
+		// Update image cache after uploading a new image
 		UpdateImageCache()
 		HandleGeneric(ctx, fasthttp.StatusCreated, "Created")
 	} else {
