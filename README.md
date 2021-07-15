@@ -30,8 +30,8 @@ To run:
   - [x] Add Dockerfile
   - [x] Add `.dockerignore`
   - [x] Add Github Actions
-  - [ ] Add codefactor
-  - [ ] Add badges
+  - [x] Add codefactor
+  - [x] Add badges
 - [x] Add usage instructions
 - [x] Finish `/upload` page
 - [ ] Finish `/browse` page
@@ -40,5 +40,6 @@ To run:
 - [ ] Issues with missing folder on startup
   - [ ] Issues with no files on startup
 - [ ] Issues with missing tmp folder
+- [ ] Issues with missing img folder
 - [ ] Issues with safety when deleting an image
 - [ ] Fix image color selection
