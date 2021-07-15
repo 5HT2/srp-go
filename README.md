@@ -6,19 +6,29 @@ Has (optional) image resizing and compression.
 This project was written in the span of about two working days, so there is likely code improvements to be made.
 Contributions are welcome and appreciated.
 
-## Usage:
+## Contributing
 
-TODO
+To build:
+```bash
+git clone git@github.com:l1ving/srp-go.git
+cd srp-go
+make
+```
+
+To run:
+```bash
+./srp-go -addr=localhost:6060
+```
 
 ## TODO:
 
-- [ ] Add Makefile
-  - [ ] Add Dockerfile
-  - [ ] Add `.dockerignore`
-  - [ ] Add Github Actions
+- [x] Add Makefile
+  - [x] Add Dockerfile
+  - [x] Add `.dockerignore`
+  - [x] Add Github Actions
   - [ ] Add codefactor
   - [ ] Add badges
-- [ ] Add usage instructions
+- [x] Add usage instructions
 - [x] Finish `/upload` page
 - [ ] Finish `/browse` page
 - [ ] Add authentication for uploading
