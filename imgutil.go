@@ -129,7 +129,10 @@ func SaveFinal(path string) error {
 	}
 
 	// Move compressed file to www/images/<file hash>
-	hash := GetFileHash(compressedPath)
+	hash, err := GetFileHash(compressedPath)
+	if err != nil {
+		return err
+	}
 	err = os.Rename(compressedPath, "www/images/"+hash)
 	if err != nil {
 		return err

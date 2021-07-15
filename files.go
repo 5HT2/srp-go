@@ -4,7 +4,6 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"io"
-	"log"
 	"os"
 )
 
@@ -12,17 +11,17 @@ var (
 	hash = sha256.New()
 )
 
-func GetFileHash(path string) string {
+func GetFileHash(path string) (string, error) {
 	hash.Reset()
 
 	f, err := os.Open(path)
 	if err != nil {
-		log.Fatal(err)
+		return "", err
 	}
 	defer f.Close()
 	if _, err := io.Copy(hash, f); err != nil {
-		log.Fatal(err)
+		return "", err
 	}
 
-	return hex.EncodeToString(hash.Sum(nil))
+	return hex.EncodeToString(hash.Sum(nil)), nil
 }
