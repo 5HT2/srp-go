@@ -32,9 +32,6 @@
                             alert("Error when uploading: " + data.status + " " + data.statusText)
                         }
                     })
-
-                // Clear object from memory
-                URL.revokeObjectURL(document.getElementById('output').src)
             }
         }
 
@@ -42,6 +39,8 @@
             const output = document.getElementById('output');
             output.src = URL.createObjectURL(event.target.files[0]);
             file = event.target.files[0]
+            // Clear object from memory
+            URL.revokeObjectURL(output.src)
         }
     </script>
 </head>
