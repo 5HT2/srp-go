@@ -29,7 +29,7 @@
                         if (data.status === 201) {
                             alert("Successfully uploaded!")
                         } else {
-                            alert("Error when uploading: " + data.toString())
+                            alert("Error when uploading: " + data.status + " " + data.statusText)
                         }
                     })
 
