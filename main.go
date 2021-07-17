@@ -21,6 +21,7 @@ var (
 	tlsKey       = flag.String("key", "", "Full key file path")
 	maxImgLength = flag.Int("maximglength", 2000, "Maximum image height and width")
 	maxBodySize  = flag.Int("maxbodysize", 100*1024*1024, "MaxRequestBodySize, defaults to 100MiB")
+	debug        = flag.Bool("debug", false, "Enable debug logging")
 
 	images                    = UpdateImageCache()
 	currentImage, currentHash = GetRandomImage()
@@ -73,11 +74,8 @@ func main() {
 // Main request handler
 func requestHandler(ctx *fasthttp.RequestCtx) {
 	path := ctx.Path()
-	SetCacheHeaders(ctx)
-	fmt.Println("")
-	ctx.Request.Header.VisitAll(func(key, value []byte) {
-		log.Printf("%v: %v", string(key), string(value))
-	})
+	setCacheHeaders(ctx)
+	handleDebug(ctx)
 
 	switch {
 	// Serve an image on /image
@@ -121,6 +119,17 @@ func SetCacheHeaders(ctx *fasthttp.RequestCtx) {
 	ctx.Response.Header.Set("Pragma", "no-cache")
 	ctx.Response.Header.Set("Expires", "0")
 	ctx.Response.Header.Set("ETag", strconv.FormatInt(time.Now().UnixNano(), 10))
+}
+
+// handleDebug will print the debugging information on requests, including ctx.Path() and headers
+func handleDebug(ctx *fasthttp.RequestCtx) {
+	if *debug {
+		fmt.Println("")
+		log.Printf("Path: %s", ctx.Path())
+		ctx.Request.Header.VisitAll(func(key, value []byte) {
+			log.Printf("%v: %v", string(key), string(value))
+		})
+	}
 }
 
 // UpdateCurrentCss updates currentCss with 000000 replaced with currentImageColor
