@@ -21,7 +21,7 @@ make
 
 To run:
 ```bash
-./srp-go -addr=localhost:6060
+./srp-go -addr=localhost:6060 -debug=true
 ```
 
 ## TODO:
@@ -42,4 +42,4 @@ To run:
 - [ ] Issues with missing tmp folder
 - [ ] Issues with missing img folder
 - [ ] Issues with safety when deleting an image
-- [ ] Fix image color selection
+- [x] Fix image color selection

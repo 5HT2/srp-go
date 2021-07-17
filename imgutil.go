@@ -78,13 +78,16 @@ func GetRandomImage() (string, string) {
 }
 
 // ImageHandler is our own RequestHandler with a CacheDuration of 0
-func ImageHandler(root string) fasthttp.RequestHandler {
+func ImageHandler(root string, stripSlashes int) fasthttp.RequestHandler {
 	fs := &fasthttp.FS{
 		Root:               root,
 		IndexNames:         []string{"index.html"},
 		GenerateIndexPages: true,
 		AcceptByteRange:    true,
 		CacheDuration:      0,
+	}
+	if stripSlashes > 0 {
+		fs.PathRewrite = fasthttp.NewPathSlashesStripper(stripSlashes)
 	}
 	return fs.NewRequestHandler()
 }

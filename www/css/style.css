@@ -1,11 +1,7 @@
-@import url("/css/dynamic.css");
-
 html, body {
     margin: 0;
     height: 100%;
     width: 100%;
-    background-color: var(--dynamic-background-color);
-    background-image: var(--dynamic-image-url);
 }
 
 img {

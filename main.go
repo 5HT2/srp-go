@@ -7,6 +7,7 @@ import (
 	"log"
 	"math/rand"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/valyala/fasthttp"
@@ -21,14 +22,14 @@ var (
 	maxBodySize  = flag.Int("maxbodysize", 100*1024*1024, "MaxRequestBodySize, defaults to 100MiB")
 	debug        = flag.Bool("debug", false, "Enable debug logging")
 
-	images                    = UpdateImageCache()
-	currentImage, currentHash = GetRandomImage()
-	cssPath                   = []byte("/css/")
-	apiPath                   = []byte("/api/")
-	imgPath                   = []byte("/image")
-	faviconPath               = []byte("/favicon.ico")
+	images      = UpdateImageCache()
+	rootPath    = []byte("/")
+	cssPath     = []byte("/css/")
+	apiPath     = []byte("/api/")
+	imgPath     = []byte("/images/")
+	faviconPath = []byte("/favicon.ico")
 
-	imgHandler = ImageHandler("www/images")
+	imgHandler = ImageHandler("www/images/", 1)
 
 	rSrc = rand.NewSource(time.Now().Unix())
 	rGen = rand.New(rSrc) // initialize local pseudorandom generator
@@ -70,16 +71,13 @@ func requestHandler(ctx *fasthttp.RequestCtx) {
 	handleDebug(ctx)
 
 	switch {
-	// Serve an image on /image
-	case bytes.Equal(path, imgPath):
-		ctx.Response.Header.Set("X-Image-Hash", currentHash)
-
-		ctx.URI().SetPathBytes([]byte("/" + currentImage))
-		imgHandler(ctx)
-
 	// Server 404 on /favicon.ico TODO: Add a default favicon
 	case bytes.Equal(path, faviconPath):
 		ctx.Response.Header.SetStatusCode(fasthttp.StatusNotFound)
+
+	// Serve images on /images/
+	case bytes.HasPrefix(path, imgPath):
+		imgHandler(ctx)
 
 	// Handle css styles on /css/
 	case bytes.HasPrefix(path, cssPath):
@@ -95,6 +93,15 @@ func requestHandler(ctx *fasthttp.RequestCtx) {
 	// Default to serving html on all other paths
 	default:
 		content := GetCachedContent(ctx, "html", true)
+
+		if bytes.Equal(path, rootPath) {
+			image, hash := GetRandomImage()
+			ctx.Response.Header.Set("X-Image-Hash", hash)
+			content = strings.Replace(content, "IMAGE_LINK", image, 1)
+			content = strings.Replace(content, "IMAGE_HASH", hash, 1)
+			content = strings.Replace(content, "#000000", GetColor(image, hash), 1)
+		}
+
 		if len(content) > 0 {
 			_, _ = fmt.Fprint(ctx, content)
 		}

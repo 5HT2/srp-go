@@ -3,7 +3,6 @@ package main
 import (
 	"github.com/valyala/fasthttp"
 	"log"
-	"path/filepath"
 	"strings"
 )
 
@@ -12,8 +11,11 @@ var (
 	fileCache   = readAllFiles()  // file path, file content
 )
 
-func GetColor(image string) string {
-	hash := strings.TrimSuffix(image, filepath.Ext(image))
+func GetColor(image string, hash string) string {
+	if len(imageColors) == 0 { // TODO: we need some better way to handle this
+		imageColors = make(map[string]string, len(images))
+	}
+
 	color := imageColors[hash]
 
 	if len(color) == 0 {
