@@ -111,11 +111,11 @@ func requestHandler(ctx *fasthttp.RequestCtx) {
 	}
 }
 
-// SetCacheHeaders sets the headers to avoid caching
-func SetCacheHeaders(ctx *fasthttp.RequestCtx) {
-	ctx.Response.Header.Set("Pragma-directive", "no-cache")
-	ctx.Response.Header.Set("Cache-directive", "no-cache")
-	ctx.Response.Header.Set("Cache-control", "no-store") // firefox ignores no-cache for this one
+// setCacheHeaders sets the headers to avoid caching
+func setCacheHeaders(ctx *fasthttp.RequestCtx) {
+	ctx.Response.Header.Set("Pragma-Directive", "no-cache")
+	ctx.Response.Header.Set("Cache-Directive", "no-cache")
+	ctx.Response.Header.Set("Cache-Control", "no-store") // firefox ignores no-cache for this one
 	ctx.Response.Header.Set("Pragma", "no-cache")
 	ctx.Response.Header.Set("Expires", "0")
 	ctx.Response.Header.Set("ETag", strconv.FormatInt(time.Now().UnixNano(), 10))
