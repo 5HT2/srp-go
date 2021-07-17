@@ -26,17 +26,14 @@ var (
 	currentImage, currentHash = GetRandomImage()
 	currentImageColor         = "000000"
 	currentCss                = ""
-	currentHtml               = ""
-	rootPath                  = []byte("/")
 	cssPath                   = []byte("/css/")
 	apiPath                   = []byte("/api/")
 	imgPath                   = []byte("/image")
 	faviconPath               = []byte("/favicon.ico")
 	rootStylePath             = []byte("/css/style.css")
 
-	imgHandler   = ImageHandler("www/images")
-	cssHandler   = fasthttp.FSHandler("www/css", 1)
-	filesHandler = fasthttp.FSHandler("www/html", 0)
+	imgHandler = ImageHandler("www/images")
+	cssHandler = fasthttp.FSHandler("www/css", 1)
 
 	rSrc = rand.NewSource(time.Now().Unix())
 	rGen = rand.New(rSrc) // initialize local pseudorandom generator
@@ -47,6 +44,7 @@ func main() {
 	log.Print("- Loading srp-go")
 	go StartPolling()
 	MkImageFolder()
+	InitHtml()
 
 	protocol := "http"
 	if *useTls {
@@ -76,14 +74,12 @@ func main() {
 func requestHandler(ctx *fasthttp.RequestCtx) {
 	path := ctx.Path()
 	SetCacheHeaders(ctx)
+	fmt.Println("")
+	ctx.Request.Header.VisitAll(func(key, value []byte) {
+		log.Printf("%v: %v", string(key), string(value))
+	})
 
 	switch {
-	// Serve index.html on /
-	case bytes.Equal(path, rootPath):
-		UpdateCurrentHtml(ctx)
-		ctx.Response.Header.Set("Content-Type", "text/html; charset=utf-8")
-		_, _ = fmt.Fprint(ctx, currentHtml)
-
 	// Serve an image on /image
 	case bytes.Equal(path, imgPath):
 		ctx.Response.Header.Set("X-Image-Hash", currentHash)
@@ -110,8 +106,10 @@ func requestHandler(ctx *fasthttp.RequestCtx) {
 
 	// Default to serving html on all other paths
 	default:
-		ctx.URI().SetPathBytes([]byte(string(path) + ".html"))
-		filesHandler(ctx)
+		content := GetHtml(ctx)
+		if len(content) > 0 {
+			_, _ = fmt.Fprint(ctx, content)
+		}
 	}
 }
 
@@ -134,17 +132,4 @@ func UpdateCurrentCss() {
 
 	contentStr := strings.Replace(string(content), "000000", currentImageColor, 1)
 	currentCss = contentStr
-}
-
-// UpdateCurrentHtml updates currentHtml with SERVER_NAME replaced with *serverName
-func UpdateCurrentHtml(ctx *fasthttp.RequestCtx) {
-	if len(currentHtml) == 0 {
-		content, err := ioutil.ReadFile("www/html/index.html")
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		contentStr := strings.Replace(string(content), "SERVER_NAME", string(ctx.Host()), 2)
-		currentHtml = contentStr
-	}
 }

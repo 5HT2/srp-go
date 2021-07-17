@@ -25,3 +25,13 @@ func GetFileHash(path string) (string, error) {
 
 	return hex.EncodeToString(hash.Sum(nil)), nil
 }
+
+func ReadFileUnsafe(file string) string {
+	content, err := os.ReadFile(file)
+
+	if err != nil {
+		panic(err)
+	}
+
+	return string(content)
+}
