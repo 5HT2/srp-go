@@ -2,14 +2,14 @@ package main
 
 import (
 	"github.com/valyala/fasthttp"
-	"os"
+	"log"
 	"path/filepath"
 	"strings"
 )
 
 var (
 	imageColors map[string]string // image hash, color hex
-	htmlCache   map[string]string // file path, html
+	fileCache   = readAllFiles()  // file path, file content
 )
 
 func GetColor(image string) string {
@@ -25,18 +25,22 @@ func GetColor(image string) string {
 	return color
 }
 
-// GetHtml returns html found inside htmlCache, with the path reformatted to "/my_path.html"
-func GetHtml(ctx *fasthttp.RequestCtx) string {
-	ctx.Response.Header.Set("Content-Type", "text/html; charset=utf-8")
+// GetCachedContent returns content found inside the appropriate cache
+func GetCachedContent(ctx *fasthttp.RequestCtx, mime string, html bool) string {
+	ctx.Response.Header.Set("Content-Type", "text/"+mime+"; charset=utf-8")
 
 	path := string(ctx.Path())
 	if path == "/" {
-		path = "/index"
+		path = "www/html/index.html"
+	} else if html {
+		path = "www/html" + path + ".html"
+	} else { // Other paths include their folder and file extension by default
+		path = "www" + path
 	}
-	path += ".html"
 
-	content := htmlCache[path]
+	content := fileCache[path]
 	if len(content) == 0 {
+		log.Println(path)
 		ctx.Response.Header.Set("Content-Type", "text/plain")
 		HandleGeneric(ctx, fasthttp.StatusNotFound, "Not Found")
 		return ""
@@ -46,19 +50,24 @@ func GetHtml(ctx *fasthttp.RequestCtx) string {
 	return content
 }
 
-// InitHtml will read all the files in www/html/ and set the keys in htmlCache to match
-func InitHtml() {
-	files, err := os.ReadDir("www/html/")
-	if err != nil {
-		panic(err) // This can't fail, and if it does, something is wrong with the user's env
-	}
+// readAllFiles will read all the files in dir and return the map of path:content.
+// The dir variable must have a slash suffix
+func readAllFiles() map[string]string {
+	filesHtml := ReadDirUnsafe("www/html/")
+	filesCss := ReadDirUnsafe("www/css/")
 
 	// Needed to make the initial map not-nil
-	htmlCache = make(map[string]string, len(files))
+	cache := make(map[string]string, len(filesHtml)+len(filesCss))
 
-	// Key format is "/file_name.html", to simplify handling the original ctx.Path()
-	for _, f := range files {
+	// Key format is "www/dir/file_name.ext", to simplify things
+	for _, f := range filesHtml {
 		path := "www/html/" + f.Name()
-		htmlCache["/"+f.Name()] = ReadFileUnsafe(path)
+		cache[path] = ReadFileUnsafe(path)
 	}
+	for _, f := range filesCss {
+		path := "www/css/" + f.Name()
+		cache[path] = ReadFileUnsafe(path)
+	}
+
+	return cache
 }

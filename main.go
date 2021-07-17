@@ -4,11 +4,9 @@ import (
 	"bytes"
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"math/rand"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/valyala/fasthttp"
@@ -25,16 +23,12 @@ var (
 
 	images                    = UpdateImageCache()
 	currentImage, currentHash = GetRandomImage()
-	currentImageColor         = "000000"
-	currentCss                = ""
 	cssPath                   = []byte("/css/")
 	apiPath                   = []byte("/api/")
 	imgPath                   = []byte("/image")
 	faviconPath               = []byte("/favicon.ico")
-	rootStylePath             = []byte("/css/style.css")
 
 	imgHandler = ImageHandler("www/images")
-	cssHandler = fasthttp.FSHandler("www/css", 1)
 
 	rSrc = rand.NewSource(time.Now().Unix())
 	rGen = rand.New(rSrc) // initialize local pseudorandom generator
@@ -43,9 +37,7 @@ var (
 func main() {
 	flag.Parse()
 	log.Print("- Loading srp-go")
-	go StartPolling()
 	MkImageFolder()
-	InitHtml()
 
 	protocol := "http"
 	if *useTls {
@@ -89,14 +81,12 @@ func requestHandler(ctx *fasthttp.RequestCtx) {
 	case bytes.Equal(path, faviconPath):
 		ctx.Response.Header.SetStatusCode(fasthttp.StatusNotFound)
 
-	// Serve css on /css/style.css
-	case bytes.Equal(path, rootStylePath):
-		ctx.Response.Header.Set("Content-Type", "text/css; charset=utf-8")
-		_, _ = fmt.Fprint(ctx, currentCss)
-
-	// Handle alternate css styles on /css/
+	// Handle css styles on /css/
 	case bytes.HasPrefix(path, cssPath):
-		cssHandler(ctx)
+		content := GetCachedContent(ctx, "ctx", false)
+		if len(content) > 0 {
+			_, _ = fmt.Fprint(ctx, content)
+		}
 
 	// Handle the api on /api/
 	case bytes.HasPrefix(path, apiPath):
@@ -104,7 +94,7 @@ func requestHandler(ctx *fasthttp.RequestCtx) {
 
 	// Default to serving html on all other paths
 	default:
-		content := GetHtml(ctx)
+		content := GetCachedContent(ctx, "html", true)
 		if len(content) > 0 {
 			_, _ = fmt.Fprint(ctx, content)
 		}
@@ -130,15 +120,4 @@ func handleDebug(ctx *fasthttp.RequestCtx) {
 			log.Printf("%v: %v", string(key), string(value))
 		})
 	}
-}
-
-// UpdateCurrentCss updates currentCss with 000000 replaced with currentImageColor
-func UpdateCurrentCss() {
-	content, err := ioutil.ReadFile("www/css/style.css")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	contentStr := strings.Replace(string(content), "000000", currentImageColor, 1)
-	currentCss = contentStr
 }

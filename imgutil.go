@@ -60,17 +60,6 @@ func MainImageColor(image string) string {
 	return col
 }
 
-// UpdateCurrentImage updates the currentImage, along with it's hash and color
-func UpdateCurrentImage() {
-	currentImage, currentHash = GetRandomImage()
-	colorTmp := MainImageColor("www/images/" + currentImage)
-	if len(colorTmp) > 1 {
-		currentImageColor = colorTmp
-	} else {
-		currentImageColor = "000000"
-	}
-}
-
 // UpdateImageCache opens the www/images directory and caches a list of FileInfos
 func UpdateImageCache() []os.FileInfo {
 	dir := "www/images"

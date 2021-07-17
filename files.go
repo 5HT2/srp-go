@@ -35,3 +35,13 @@ func ReadFileUnsafe(file string) string {
 
 	return string(content)
 }
+
+func ReadDirUnsafe(dir string) []os.DirEntry {
+	entries, err := os.ReadDir(dir)
+
+	if err != nil {
+		panic(err)
+	}
+
+	return entries
+}
