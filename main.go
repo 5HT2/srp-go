@@ -38,7 +38,6 @@ var (
 func main() {
 	flag.Parse()
 	log.Print("- Loading srp-go")
-	MkImageFolder()
 
 	protocol := "http"
 	if *useTls {

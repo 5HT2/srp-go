@@ -15,18 +15,6 @@ import (
 	"strings"
 )
 
-// MkImageFolder safely creates the image folder if it is not cloned by git (since it is empty)
-func MkImageFolder() {
-	dir := "www/images"
-	if _, err := os.Stat(dir); os.IsNotExist(err) {
-		err := os.Mkdir(dir, os.FileMode(0700))
-
-		if err != nil {
-			log.Fatalf("- Error making %s - %v", dir, err)
-		}
-	}
-}
-
 // LoadImage returns an image object for fileInput
 func LoadImage(fileInput string) (image.Image, error) {
 	imgBytes, err := ioutil.ReadFile(fileInput)
