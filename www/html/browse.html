@@ -2,13 +2,20 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,height=device-height,initial-scale=1">
     <title>SERVER_NAME</title>
     <link rel="icon" type="image/png" href="/favicon.ico">
-    <meta name="viewport" content="width=device-width,height=device-height,initial-scale=1">
     <link rel="stylesheet" href="/css/browse.css">
-    <link rel="stylesheet" href="https://unpkg.com/lightgallery@2.1.8/css/lightgallery-bundle.min.css"
-          integrity="sha384-alNzC8sUCZfRXl+4XGMBogjPIcv1g9idem0G7Fm8uO8hE06itjf0bbC1gYs2SiLK"
+    <link rel="stylesheet" href="https://unpkg.com/justifiedGallery@3.8.1/dist/css/justifiedGallery.min.css"
+          integrity="sha512-CRFv/YVJyElHXTiMgnhWKd2f04Hd/BUJkwcyqYmlpL1ugSYW23nNRazLk960mlz7dugTrETCGGjcsnspPOS6qA=="
           crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
+            integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://unpkg.com/justifiedGallery@3.8.1/dist/js/jquery.justifiedGallery.min.js"
+            integrity="sha384-TOxsBplaL96/QDWPIUg+ye3v89qSE3s22XNtJMmCeZEep3cVDmXy1zEfZvVv+y2m"
+            crossorigin="anonymous"></script>
+
 <body>
 <div class="container-sm">
     <div class="row justify-content-center">
@@ -180,32 +187,17 @@
         </div>
     </div>
 </div>
-<script src="https://unpkg.com/lightgallery@2.1.8/lightgallery.min.js"
-        integrity="sha384-l5lFB9srHFAyvfCoHya9X1JwGGTNPvDtikieqZp7qu/bomCw0e0+yoyiL0f7UXLD"
-        crossorigin="anonymous"></script>
+
 <script type="text/javascript">
-    lightGallery(document.getElementById('lightgallery'), {
-        captions: false,
-        lastRow: "hide",
-        rowHeight: 180,
-        margins: 5
-    }).then(
-        window.lightGallery(
-            document.getElementById("animated-thumbnails-gallery"),
-            {
-                autoplayFirstVideo: false,
-                pager: false,
-                galleryId: "SERVER_NAME",
-                plugins: ['lgZoom', 'lgThumbnail'],
-                mobileSettings: {
-                    controls: false,
-                    showCloseIcon: false,
-                    download: false,
-                    rotate: false
-                }
-            }
-        )
-    );
+    jQuery("#animated-thumbnails-gallery")
+        .justifiedGallery({
+            captions: false,
+            randomize: true,
+            lastRow: "nojustify",
+            rowHeight: 250,
+            margins: 5
+        });
 </script>
+
 </body>
 </html>

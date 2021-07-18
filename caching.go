@@ -49,6 +49,7 @@ func GetCachedContent(ctx *fasthttp.RequestCtx, mime string, html bool) string {
 	}
 
 	content = strings.ReplaceAll(content, "SERVER_NAME", string(ctx.Host()))
+	content = strings.Replace(content, "AAAAAA", *browseImgColor, 1)
 	return content
 }
 

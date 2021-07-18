@@ -1,17 +1,14 @@
 body {
-    padding: 40px;
-    background-image: linear-gradient(#e8f0ff 0%, white 52.08%);
-    color: #0e3481;
+    padding: 15px;
+    background-image: linear-gradient(#AAAAAA, white);
     min-height: 100vh;
 }
 
 .header .lead {
-    max-width: 620px;
+    max-width: 10px;
 }
 
-/** Below CSS is completely optional **/
-
 .gallery-item {
-    width: 200px;
+    width: 50px;
     padding: 5px;
 }

@@ -14,13 +14,14 @@ import (
 )
 
 var (
-	addr         = flag.String("addr", "localhost:6060", "TCP address to listen to")
-	useTls       = flag.Bool("tls", false, "Whether to enable TLS")
-	tlsCert      = flag.String("cert", "", "Full certificate file path")
-	tlsKey       = flag.String("key", "", "Full key file path")
-	maxImgLength = flag.Int("maximglength", 2000, "Maximum image height and width")
-	maxBodySize  = flag.Int("maxbodysize", 100*1024*1024, "MaxRequestBodySize, defaults to 100MiB")
-	debug        = flag.Bool("debug", false, "Enable debug logging")
+	addr           = flag.String("addr", "localhost:6060", "TCP address to listen to")
+	useTls         = flag.Bool("tls", false, "Whether to enable TLS")
+	tlsCert        = flag.String("cert", "", "Full certificate file path")
+	tlsKey         = flag.String("key", "", "Full key file path")
+	maxImgLength   = flag.Int("maximglength", 2000, "Maximum image height and width")
+	maxBodySize    = flag.Int("maxbodysize", 100*1024*1024, "MaxRequestBodySize, defaults to 100MiB")
+	browseImgColor = flag.String("browseimgcolor", "eaffe8", "Background color to use for browse page")
+	debug          = flag.Bool("debug", false, "Enable debug logging")
 
 	images      = UpdateImageCache()
 	rootPath    = []byte("/")
@@ -119,7 +120,7 @@ func setCacheHeaders(ctx *fasthttp.RequestCtx) {
 // handleDebug will print the debugging information on requests, including ctx.Path() and headers
 func handleDebug(ctx *fasthttp.RequestCtx) {
 	if *debug {
-		ReadAllFiles() // re-read html caches for easier debugging, worse performance
+		fileCache = ReadAllFiles() // re-read html caches for easier debugging, worse performance
 		fmt.Println("")
 		log.Printf("Path: %s", ctx.Path())
 		ctx.Request.Header.VisitAll(func(key, value []byte) {

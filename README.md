@@ -21,6 +21,7 @@ make
 
 To run:
 ```bash
+./srp-go -h # for a full list of parameters (none required)
 ./srp-go -addr=localhost:6060 -debug=true
 ```
 
