@@ -40,7 +40,7 @@ To run:
 - [ ] Cleanup error handling
 - [ ] Issues with missing folder on startup
   - [ ] Issues with no files on startup
-- [ ] Issues with missing tmp folder
+- [x] Issues with missing tmp folder
 - [ ] Issues with missing img folder
 - [x] Issues with safety when deleting an image
 - [x] Fix image color selection
