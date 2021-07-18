@@ -35,7 +35,7 @@ To run:
   - [x] Add badges
 - [x] Add usage instructions
 - [x] Finish `/upload` page
-- [ ] Finish `/browse` page
+- [x] Finish `/browse` page
 - [ ] Add authentication for uploading
 - [ ] Cleanup error handling
 - [ ] Issues with missing folder on startup
