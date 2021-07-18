@@ -119,6 +119,7 @@ func setCacheHeaders(ctx *fasthttp.RequestCtx) {
 // handleDebug will print the debugging information on requests, including ctx.Path() and headers
 func handleDebug(ctx *fasthttp.RequestCtx) {
 	if *debug {
+		ReadAllFiles() // re-read html caches for easier debugging, worse performance
 		fmt.Println("")
 		log.Printf("Path: %s", ctx.Path())
 		ctx.Request.Header.VisitAll(func(key, value []byte) {

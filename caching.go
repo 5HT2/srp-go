@@ -8,7 +8,7 @@ import (
 
 var (
 	imageColors map[string]string // image hash, color hex
-	fileCache   = readAllFiles()  // file path, file content
+	fileCache   = ReadAllFiles()  // file path, file content
 )
 
 func GetColor(image string) string {
@@ -52,9 +52,9 @@ func GetCachedContent(ctx *fasthttp.RequestCtx, mime string, html bool) string {
 	return content
 }
 
-// readAllFiles will read all the files in dir and return the map of path:content.
+// ReadAllFiles will read all the files in dir and return the map of path:content.
 // The dir variable must have a slash suffix
-func readAllFiles() map[string]string {
+func ReadAllFiles() map[string]string {
 	filesHtml := ReadDirUnsafe("www/html/")
 	filesCss := ReadDirUnsafe("www/css/")
 
