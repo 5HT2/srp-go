@@ -42,5 +42,5 @@ To run:
   - [ ] Issues with no files on startup
 - [ ] Issues with missing tmp folder
 - [ ] Issues with missing img folder
-- [ ] Issues with safety when deleting an image
+- [x] Issues with safety when deleting an image
 - [x] Fix image color selection
