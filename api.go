@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"github.com/valyala/fasthttp"
+	"log"
 	"strconv"
 	"time"
 )
@@ -33,12 +34,14 @@ func handleUpload(ctx *fasthttp.RequestCtx) {
 	if err == nil {
 		err = fasthttp.SaveMultipartFile(fh, path)
 		if err != nil {
+			log.Printf("- Error saving file from /api/upload: %s", err)
 			HandleInternalServerError(ctx, err)
 			return
 		}
 
 		image, err := SaveFinal(path)
 		if err != nil {
+			log.Printf("- Error converting file from /api/upload: %s", err)
 			HandleInternalServerError(ctx, err)
 			return
 		}
@@ -50,6 +53,7 @@ func handleUpload(ctx *fasthttp.RequestCtx) {
 		// we want to check if it's missing in case the user uploads the same image more than once
 		images = AppendIfMissing(images, image)
 	} else {
+		log.Printf("- Other error with handling upload %s", err)
 		HandleInternalServerError(ctx, err)
 	}
 }
