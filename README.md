@@ -1,10 +1,10 @@
-# srp-go
+# [srp-go](https://frog.pics)
 [![time tracker](https://wakatime.com/badge/github/l1ving/srp-go.svg)](https://wakatime.com/badge/github/l1ving/srp-go)
 [![Docker Pulls](https://img.shields.io/docker/pulls/l1ving/srp-go?logo=docker&logoColor=white)](https://hub.docker.com/r/l1ving/srp-go)
 [![Docker Build](https://img.shields.io/github/workflow/status/l1ving/srp-go/docker-build?logo=docker&logoColor=white)](https://github.com/l1ving/srp-go/actions/workflows/docker-build.yml)
 [![CodeFactor](https://img.shields.io/codefactor/grade/github/l1ving/srp-go?logo=codefactor&logoColor=white)](https://www.codefactor.io/repository/github/l1ving/srp-go)
 
-Serve a random image on `/` with a dynamic background color, let users upload on `/upload` and browse a gallery on `/browse`.
+Serve a random image on [<main page>](https://frog.pics)  with a dynamic background color, let users upload on [/upload](https://frog.pics/upload) and browse a gallery on [/browse](https://frog.pics/browse).
 Has (optional) image resizing and compression.
 
 This project was written in the span of about two working days, so there is likely code improvements to be made.
