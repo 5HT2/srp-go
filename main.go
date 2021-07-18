@@ -22,6 +22,8 @@ var (
 	maxBodySize    = flag.Int("maxbodysize", 100*1024*1024, "MaxRequestBodySize, defaults to 100MiB")
 	browseImgColor = flag.String("browseimgcolor", "eaffe8", "Background color to use for browse page")
 	debug          = flag.Bool("debug", false, "Enable debug logging")
+	// TODO: Remove when auth added
+	allowUpload = flag.Bool("allowupload", false, "Allow disabling upload (temporary)")
 
 	images      = UpdateImageCache()
 	rootPath    = []byte("/")

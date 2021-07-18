@@ -18,6 +18,11 @@ func HandleApi(ctx *fasthttp.RequestCtx) {
 		return
 	}
 
+	if *allowUpload != true {
+		HandleForbidden(ctx)
+		return
+	}
+
 	path := ctx.Path()
 
 	switch {
