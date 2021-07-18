@@ -6,6 +6,7 @@ import (
 	"github.com/h2non/bimg"
 	"github.com/valyala/fasthttp"
 	"image"
+	_ "image/jpeg"
 	_ "image/png" // used by prominent color
 	"io/ioutil"
 	"log"
@@ -33,8 +34,8 @@ func LoadImage(fileInput string) (image.Image, error) {
 func MainImageColor(image string) string {
 	img, err := LoadImage(image)
 	if nil != err {
-		log.Fatalf("- Failed loading image %s - %s", image, err)
-		return ""
+		log.Printf("- Failed loading image %s - %s", image, err)
+		return "000" // This could theoretically cause issues, but will help us catch unknown ones
 	}
 
 	cols, err := prominentcolor.KmeansWithArgs(prominentcolor.ArgumentDefault, img)
@@ -85,9 +86,8 @@ func ImageHandler(root string, stripSlashes int) fasthttp.RequestHandler {
 }
 
 func SaveFinal(path string) (string, error) {
-	buffer, ext, err := ConvertAndCompress(path)
-
-	compressedPath := path + ext
+	buffer, err := ConvertAndCompress(path)
+	compressedPath := path + "-min"
 	removePath := path
 
 	fiOriginal, err := os.Stat(path)
@@ -108,7 +108,7 @@ func SaveFinal(path string) (string, error) {
 	// We want to do this check in case the original image was more efficiently compressed than ours
 	// fiNew is path + ext (compressed), fiOriginal is path
 	if fiNew.Size() > fiOriginal.Size() {
-		removePath = path + ext
+		removePath = path + "-min"
 		compressedPath = path
 	}
 
@@ -129,43 +129,39 @@ func SaveFinal(path string) (string, error) {
 
 // ConvertAndCompress will convert the image to jpg if it's non-transparent, and compress
 // if it meets the requirements for being compressed
-func ConvertAndCompress(path string) ([]byte, string, error) {
+func ConvertAndCompress(path string) ([]byte, error) {
 	buffer, err := bimg.Read(path)
 	if err != nil {
-		return nil, "", err
+		return nil, err
 	}
 
-	ext, buffer, err := ConvertImage(buffer)
+	buffer, err = ConvertImage(buffer)
 	if err != nil {
-		return nil, "", err
+		return nil, err
 	}
 
 	buffer, err = CompressImage(buffer)
 	if err != nil {
-		return nil, "", err
+		return nil, err
 	}
 
-	return buffer, ext, nil
+	return buffer, nil
 }
 
 // ConvertImage will take path and convert the image to a png
-func ConvertImage(buffer []byte) (string, []byte, error) {
-	ext := ""
+func ConvertImage(buffer []byte) ([]byte, error) {
 	img, err := bimg.NewImage(buffer).Metadata()
 	if err != nil {
-		return ext, nil, err
+		return nil, err
 	}
 
-	if img.Alpha == true {
-		ext = ".png"
-	} else {
-		ext = ".jpg"
+	if img.Alpha != true {
 		// Re-read the image from the new buffer, and convert to jpg
 		img := bimg.NewImage(buffer)
 		buffer, err = img.Convert(bimg.JPEG)
 	}
 
-	return ext, buffer, err
+	return buffer, err
 }
 
 func CompressImage(buffer []byte) ([]byte, error) {
