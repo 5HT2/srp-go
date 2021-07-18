@@ -11,6 +11,7 @@ import (
 	"log"
 	"math"
 	"os"
+	"strings"
 )
 
 // LoadImage returns an image object for fileInput
@@ -226,4 +227,16 @@ func GetNewImageSize(width int, height int) bimg.ImageSize {
 	newHeight := heightF - (heightF * change)
 	newWidth := widthF - (widthF * change)
 	return bimg.ImageSize{Width: ToInt(newWidth), Height: ToInt(newHeight)}
+}
+
+func GetBrowseImagesHtml() string {
+	template := "<a class=\"gallery-item\" data-src=\"\" data-sub-html=\"\"> <img class=\"img-responsive\" src=\"/images/IMAGE_HASH\" alt=\"IMAGE_HASH\"/> </a>"
+	var galleryImages []string
+
+	for _, img := range images {
+		content := strings.Replace(template, "IMAGE_HASH", img, 2)
+		galleryImages = append(galleryImages, content)
+	}
+
+	return strings.Join(galleryImages[:], "\n    ")
 }
