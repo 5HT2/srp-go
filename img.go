@@ -20,6 +20,7 @@ func LoadImage(fileInput string) (image.Image, error) {
 	imgBytes, err := ioutil.ReadFile(fileInput)
 	if err != nil {
 		log.Fatalf("- Failed loading %s - %s", fileInput, err)
+		return nil, nil
 	}
 
 	img, _, err := image.Decode(bytes.NewBuffer(imgBytes))
@@ -34,8 +35,8 @@ func LoadImage(fileInput string) (image.Image, error) {
 func MainImageColor(image string) string {
 	img, err := LoadImage(image)
 	if nil != err {
-		log.Printf("- Failed loading image %s - %s", image, err)
-		return "000" // This could theoretically cause issues, but will help us catch unknown ones
+		log.Fatalf("- Failed loading image %s - %s", image, err)
+		return ""
 	}
 
 	cols, err := prominentcolor.KmeansWithArgs(prominentcolor.ArgumentDefault, img)
@@ -108,8 +109,17 @@ func SaveFinal(path string) (string, error) {
 	// We want to do this check in case the original image was more efficiently compressed than ours
 	// fiNew is path + ext (compressed), fiOriginal is path
 	if fiNew.Size() > fiOriginal.Size() {
-		removePath = path + "-min"
-		compressedPath = path
+		buffer, err = os.ReadFile(path)
+		if err != nil {
+			return "", err
+		}
+
+		// We only want to keep the smaller version if it is the correct file format
+		imgType := bimg.DetermineImageType(buffer)
+		if imgType == bimg.PNG || imgType == bimg.JPEG {
+			removePath = path + "-min"
+			compressedPath = path
+		}
 	}
 
 	// Move compressed file to www/images/<file hash>
@@ -135,12 +145,12 @@ func ConvertAndCompress(path string) ([]byte, error) {
 		return nil, err
 	}
 
-	buffer, err = ConvertImage(buffer)
+	imgType, err := GetNewImageType(buffer)
 	if err != nil {
 		return nil, err
 	}
 
-	buffer, err = CompressImage(buffer)
+	buffer, err = CompressImage(buffer, imgType)
 	if err != nil {
 		return nil, err
 	}
@@ -148,23 +158,21 @@ func ConvertAndCompress(path string) ([]byte, error) {
 	return buffer, nil
 }
 
-// ConvertImage will take path and convert the image to a png
-func ConvertImage(buffer []byte) ([]byte, error) {
+// GetNewImageType will take path and convert the image to a png
+func GetNewImageType(buffer []byte) (bimg.ImageType, error) {
 	img, err := bimg.NewImage(buffer).Metadata()
 	if err != nil {
-		return nil, err
+		return bimg.UNKNOWN, err
 	}
 
-	if img.Alpha != true {
-		// Re-read the image from the new buffer, and convert to jpg
-		img := bimg.NewImage(buffer)
-		buffer, err = img.Convert(bimg.JPEG)
+	if img.Alpha == true {
+		return bimg.PNG, nil
+	} else {
+		return bimg.JPEG, nil
 	}
-
-	return buffer, err
 }
 
-func CompressImage(buffer []byte) ([]byte, error) {
+func CompressImage(buffer []byte, imgType bimg.ImageType) ([]byte, error) {
 	imgMeta, err := bimg.NewImage(buffer).Metadata()
 	if err != nil {
 		return nil, err
@@ -187,6 +195,7 @@ func CompressImage(buffer []byte) ([]byte, error) {
 	options.Compression = 3
 	options.Height = size.Height
 	options.Width = size.Width
+	options.Type = imgType
 
 	// Process options such as StripMetadata
 	buffer, err = bimg.Resize(buffer, options)
@@ -198,6 +207,8 @@ func CompressImage(buffer []byte) ([]byte, error) {
 	img := bimg.NewImage(buffer)
 	buffer, err = img.Process(options)
 
+	// Make sure the changes are now saved
+	buffer = bimg.NewImage(buffer).Image()
 	return buffer, err
 }
 

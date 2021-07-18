@@ -2,7 +2,6 @@ package main
 
 import (
 	"github.com/valyala/fasthttp"
-	"log"
 	"strings"
 )
 
@@ -42,7 +41,6 @@ func GetCachedContent(ctx *fasthttp.RequestCtx, mime string, html bool) string {
 
 	content := fileCache[path]
 	if len(content) == 0 {
-		log.Println(path)
 		ctx.Response.Header.Set("Content-Type", "text/plain")
 		HandleGeneric(ctx, fasthttp.StatusNotFound, "Not Found")
 		return ""
