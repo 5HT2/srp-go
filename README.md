@@ -7,7 +7,6 @@
 Serve a random image on [\<main page\>](https://frog.pics) with a dynamic background color, let users upload on [/upload](https://frog.pics/upload) and browse a gallery on [/browse](https://frog.pics/browse).
 Has (optional) image resizing and compression.
 
-This project was written in the span of about two working days, so there is likely code improvements to be made.
 Contributions are welcome and appreciated.
 
 ## Contributing
