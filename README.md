@@ -44,3 +44,5 @@ To run:
 - [ ] Issues with missing img folder
 - [x] Issues with safety when deleting an image
 - [x] Fix image color selection
+- [ ] Add Discord embeds
+- [ ] Add favicon
