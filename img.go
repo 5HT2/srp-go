@@ -11,8 +11,6 @@ import (
 	"log"
 	"math"
 	"os"
-	"path/filepath"
-	"strings"
 )
 
 // LoadImage returns an image object for fileInput
@@ -49,20 +47,25 @@ func MainImageColor(image string) string {
 }
 
 // UpdateImageCache opens the www/images directory and caches a list of FileInfos
-func UpdateImageCache() []os.FileInfo {
+func UpdateImageCache() []string {
 	dir := "www/images"
 	dirOpen, _ := os.Open(dir)
 	tmpImages, err := dirOpen.Readdir(0)
 	if err != nil {
 		panic(err)
 	}
-	return tmpImages
+
+	var imageNames []string
+	for _, f := range tmpImages {
+		imageNames = append(imageNames, f.Name())
+	}
+
+	return imageNames
 }
 
 // GetRandomImage chooses a random image name from the image cache
-func GetRandomImage() (string, string) {
-	filename := images[rGen.Intn(len(images))].Name()
-	return filename, strings.TrimSuffix(filename, filepath.Ext(filename))
+func GetRandomImage() string {
+	return images[rGen.Intn(len(images))]
 }
 
 // ImageHandler is our own RequestHandler with a CacheDuration of 0
@@ -80,7 +83,7 @@ func ImageHandler(root string, stripSlashes int) fasthttp.RequestHandler {
 	return fs.NewRequestHandler()
 }
 
-func SaveFinal(path string) error {
+func SaveFinal(path string) (string, error) {
 	buffer, ext, err := ConvertAndCompress(path)
 
 	compressedPath := path + ext
@@ -88,17 +91,17 @@ func SaveFinal(path string) error {
 
 	fiOriginal, err := os.Stat(path)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	err = bimg.Write(compressedPath, buffer)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	fiNew, err := os.Stat(compressedPath)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	// We want to do this check in case the original image was more efficiently compressed than ours
@@ -111,16 +114,16 @@ func SaveFinal(path string) error {
 	// Move compressed file to www/images/<file hash>
 	hash, err := GetFileHash(compressedPath)
 	if err != nil {
-		return err
+		return "", err
 	}
 	err = os.Rename(compressedPath, "www/images/"+hash)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	err = os.Remove(removePath)
 
-	return err
+	return hash, err
 }
 
 // ConvertAndCompress will convert the image to jpg if it's non-transparent, and compress

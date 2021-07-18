@@ -94,11 +94,10 @@ func requestHandler(ctx *fasthttp.RequestCtx) {
 		content := GetCachedContent(ctx, "html", true)
 
 		if bytes.Equal(path, rootPath) {
-			image, hash := GetRandomImage()
-			ctx.Response.Header.Set("X-Image-Hash", hash)
-			content = strings.Replace(content, "IMAGE_LINK", image, 1)
-			content = strings.Replace(content, "IMAGE_HASH", hash, 1)
-			content = strings.Replace(content, "#000000", GetColor(image, hash), 1)
+			image := GetRandomImage()
+			ctx.Response.Header.Set("X-Image-Hash", image)
+			content = strings.Replace(content, "IMAGE_HASH", image, 2)
+			content = strings.Replace(content, "#000000", GetColor(image), 1)
 		}
 
 		if len(content) > 0 {

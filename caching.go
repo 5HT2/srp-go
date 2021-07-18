@@ -11,16 +11,16 @@ var (
 	fileCache   = readAllFiles()  // file path, file content
 )
 
-func GetColor(image string, hash string) string {
+func GetColor(image string) string {
 	if len(imageColors) == 0 { // TODO: we need some better way to handle this
 		imageColors = make(map[string]string, len(images))
 	}
 
-	color := imageColors[hash]
+	color := imageColors[image]
 
 	if len(color) == 0 {
 		newColor := MainImageColor("www/images/" + image)
-		imageColors[hash] = newColor
+		imageColors[image] = newColor
 		return newColor
 	}
 

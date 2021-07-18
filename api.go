@@ -37,15 +37,18 @@ func handleUpload(ctx *fasthttp.RequestCtx) {
 			return
 		}
 
-		err = SaveFinal(path)
+		image, err := SaveFinal(path)
 		if err != nil {
 			HandleInternalServerError(ctx, err)
 			return
 		}
 
-		// Update image cache after uploading a new image
-		UpdateImageCache()
+		ctx.Response.Header.Set("X-Image-Hash", image)
 		HandleGeneric(ctx, fasthttp.StatusCreated, "Created")
+
+		// Update image cache after uploading a new image
+		// we want to check if it's missing in case the user uploads the same image more than once
+		images = AppendIfMissing(images, image)
 	} else {
 		HandleInternalServerError(ctx, err)
 	}
