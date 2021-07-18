@@ -32,7 +32,7 @@ var (
 	imgPath     = []byte("/images/")
 	faviconPath = []byte("/favicon.ico")
 
-	imgHandler = ImageHandler("www/images/", 1)
+	imgHandler = ImageHandler("www/content/images/", 1)
 
 	rSrc = rand.NewSource(time.Now().Unix())
 	rGen = rand.New(rSrc) // initialize local pseudorandom generator

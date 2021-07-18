@@ -4,7 +4,8 @@ ARG LIBVIPS_VERSION=8.11.2
 
 RUN mkdir /srp-go
 ADD . /srp-go
-RUN mkdir -p /srp-go/www/images/tmp
+RUN mkdir -p /srp-go/www/content/images/ \
+ && mkdir -p /srp-go/www/content/tmp/
 WORKDIR /srp-go
 
 # Installs libvips + required libraries

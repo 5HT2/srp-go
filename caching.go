@@ -19,7 +19,7 @@ func GetColor(image string) string {
 	color := imageColors[image]
 
 	if len(color) == 0 {
-		newColor := MainImageColor("www/images/" + image)
+		newColor := MainImageColor("www/content/images/" + image)
 		imageColors[image] = newColor
 		return newColor
 	}

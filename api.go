@@ -34,7 +34,7 @@ func HandleApi(ctx *fasthttp.RequestCtx) {
 func handleUpload(ctx *fasthttp.RequestCtx) {
 	fh, err := ctx.FormFile("file")
 	tmpName := strconv.FormatInt(time.Now().UnixNano(), 10)
-	path := "www/images/tmp/" + tmpName
+	path := "www/content/tmp/" + tmpName
 
 	if err == nil {
 		err = fasthttp.SaveMultipartFile(fh, path)

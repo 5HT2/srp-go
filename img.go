@@ -51,7 +51,7 @@ func MainImageColor(image string) string {
 
 // UpdateImageCache opens the www/images directory and caches a list of FileInfos
 func UpdateImageCache() []string {
-	dir := "www/images"
+	dir := "www/content/images/"
 	dirOpen, _ := os.Open(dir)
 	tmpImages, err := dirOpen.Readdir(0)
 	if err != nil {
@@ -127,7 +127,7 @@ func SaveFinal(path string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	err = os.Rename(compressedPath, "www/images/"+hash)
+	err = os.Rename(compressedPath, "www/content/images/"+hash)
 	if err != nil {
 		return "", err
 	}
