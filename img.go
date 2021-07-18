@@ -225,9 +225,5 @@ func GetNewImageSize(width int, height int) bimg.ImageSize {
 
 	newHeight := heightF - (heightF * change)
 	newWidth := widthF - (widthF * change)
-	return bimg.ImageSize{Width: toInt(newWidth), Height: toInt(newHeight)}
-}
-
-func toInt(f float64) int {
-	return int(f + 0.5)
+	return bimg.ImageSize{Width: ToInt(newWidth), Height: ToInt(newHeight)}
 }
