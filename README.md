@@ -51,4 +51,4 @@ after you have uploaded a few pictures. The sample file is there to prevent issu
 - [ ] Add favicon
 - [ ] Switch to a different prominent color library, because the current one doesn't support webp
   - [ ] Switch to webp for saving images
-- [ ] Add EXIF removing
+- [x] Add EXIF removing
