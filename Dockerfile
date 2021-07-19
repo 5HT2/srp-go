@@ -36,8 +36,8 @@ RUN DEBIAN_FRONTEND=noninteractive \
   ldconfig && \
   rm -rf /var/lib/apt/lists/*
 
-RUN go build -o srp-bin .
-
 ENV ADDRESS "localhost:6060"
 ENV MAXBODYSIZE "104857600"
+
+RUN go build -o srp-bin .
 CMD /srp-go/srp-bin -maxbodysize $MAXBODYSIZE -addr $ADDRESS
