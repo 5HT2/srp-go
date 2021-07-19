@@ -1,6 +1,6 @@
 body {
     padding: 15px;
-    background-image: linear-gradient(#AAAAAA, white);
+    background-image: linear-gradient(var(--color-placeholder), white);
     min-height: 100vh;
 }
 

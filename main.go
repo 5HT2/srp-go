@@ -28,6 +28,7 @@ var (
 	images      = UpdateImageCache()
 	rootPath    = []byte("/")
 	cssPath     = []byte("/css/")
+	svgPath     = []byte("/svg/")
 	apiPath     = []byte("/api/")
 	imgPath     = []byte("/images/")
 	faviconPath = []byte("/favicon.ico")
@@ -83,7 +84,14 @@ func requestHandler(ctx *fasthttp.RequestCtx) {
 
 	// Handle css styles on /css/
 	case bytes.HasPrefix(path, cssPath):
-		content := GetCachedContent(ctx, "ctx", false)
+		content := GetCachedContent(ctx, cssMime)
+		if len(content) > 0 {
+			_, _ = fmt.Fprint(ctx, content)
+		}
+
+	// Handle svg files on /svg/
+	case bytes.HasPrefix(path, svgPath):
+		content := GetCachedContent(ctx, svgMime)
 		if len(content) > 0 {
 			_, _ = fmt.Fprint(ctx, content)
 		}
@@ -94,7 +102,7 @@ func requestHandler(ctx *fasthttp.RequestCtx) {
 
 	// Default to serving html on all other paths
 	default:
-		content := GetCachedContent(ctx, "html", true)
+		content := GetCachedContent(ctx, htmlMime)
 
 		if bytes.Equal(path, rootPath) {
 			image := GetRandomImage()
@@ -122,7 +130,7 @@ func setCacheHeaders(ctx *fasthttp.RequestCtx) {
 // handleDebug will print the debugging information on requests, including ctx.Path() and headers
 func handleDebug(ctx *fasthttp.RequestCtx) {
 	if *debug {
-		fileCache = ReadAllFiles() // re-read html caches for easier debugging, worse performance
+		fileCache = LoadAllCaches() // re-read html caches for easier debugging, worse performance
 		fmt.Println("")
 		log.Printf("Path: %s", ctx.Path())
 		ctx.Request.Header.VisitAll(func(key, value []byte) {

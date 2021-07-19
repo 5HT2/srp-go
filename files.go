@@ -36,11 +36,17 @@ func ReadFileUnsafe(file string) string {
 	return string(content)
 }
 
-func ReadDirUnsafe(dir string) []os.DirEntry {
-	entries, err := os.ReadDir(dir)
+func ReadDirsUnsafe(dirs ...string) map[string][]os.DirEntry {
+	entries := make(map[string][]os.DirEntry, 0)
 
-	if err != nil {
-		panic(err)
+	for _, dir := range dirs {
+		dirEntries, err := os.ReadDir(dir)
+
+		if err != nil {
+			panic(err)
+		}
+
+		entries[dir] = dirEntries
 	}
 
 	return entries
