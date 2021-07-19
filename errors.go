@@ -21,7 +21,7 @@ func HandleForbidden(ctx *fasthttp.RequestCtx) {
 		ctx.RemoteIP(), ctx.Request.Header.Peek("Auth"), ctx.Path())
 }
 
-func HandleInternalServerError(ctx *fasthttp.RequestCtx, err error) {
+func HandleInternalServerError(ctx *fasthttp.RequestCtx, message string, err error) {
 	if strings.HasSuffix(err.Error(), "no such file or directory") {
 		HandleGeneric(ctx, fasthttp.StatusNotFound, "Not Found")
 		return
@@ -30,5 +30,5 @@ func HandleInternalServerError(ctx *fasthttp.RequestCtx, err error) {
 	ctx.Response.SetStatusCode(fasthttp.StatusInternalServerError)
 	ctx.Response.Header.Set("X-Server-Message", "500 "+err.Error())
 	fmt.Fprintf(ctx, "500 %v\n", err)
-	log.Printf("- Returned 500 to %s with error %v", ctx.RemoteIP(), err)
+	log.Printf("- %v: %s %v", ctx.RemoteIP(), message, err)
 }

@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"github.com/valyala/fasthttp"
-	"log"
 	"strconv"
 	"time"
 )
@@ -39,15 +38,13 @@ func handleUpload(ctx *fasthttp.RequestCtx) {
 	if err == nil {
 		err = fasthttp.SaveMultipartFile(fh, path)
 		if err != nil {
-			log.Printf("- Error saving file from /api/upload: %s", err)
-			HandleInternalServerError(ctx, err)
+			HandleInternalServerError(ctx, "Error saving file from /api/upload", err)
 			return
 		}
 
 		image, err := SaveFinal(path)
 		if err != nil {
-			log.Printf("- Error converting file from /api/upload: %s", err)
-			HandleInternalServerError(ctx, err)
+			HandleInternalServerError(ctx, "Error converting file from /api/upload", err)
 			return
 		}
 
@@ -60,7 +57,6 @@ func handleUpload(ctx *fasthttp.RequestCtx) {
 		// Update the browse gallery cache after uploading
 		galleryCache = LoadGalleryCache()
 	} else {
-		log.Printf("- Other error with handling upload %s", err)
-		HandleInternalServerError(ctx, err)
+		HandleInternalServerError(ctx, "Other error with handling upload", err)
 	}
 }

@@ -14,22 +14,6 @@ import (
 	"os"
 )
 
-// LoadImage returns an image object for fileInput
-func LoadImage(fileInput string) (image.Image, error) {
-	imgBytes, err := ioutil.ReadFile(fileInput)
-	if err != nil {
-		log.Fatalf("- Failed loading %s - %s", fileInput, err)
-		return nil, nil
-	}
-
-	img, _, err := image.Decode(bytes.NewBuffer(imgBytes))
-	if err != nil {
-		return nil, err
-	}
-
-	return img, nil
-}
-
 // MainImageColor calculates the median color of cropped image
 func MainImageColor(image string) string {
 	img, err := LoadImage(image)
@@ -46,6 +30,18 @@ func MainImageColor(image string) string {
 
 	col := cols[0].AsString()
 	return col
+}
+
+// LoadImage returns an image object for path
+func LoadImage(path string) (image.Image, error) {
+	imgBytes, err := ioutil.ReadFile(path)
+	if err != nil {
+		log.Fatalf("- Failed loading %s - %s", path, err)
+		return nil, err
+	}
+
+	img, _, err := image.Decode(bytes.NewBuffer(imgBytes))
+	return img, err
 }
 
 // GetRandomImage chooses a random image name from the image cache

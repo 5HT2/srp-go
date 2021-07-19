@@ -40,7 +40,7 @@ after you have uploaded a few pictures. The sample file is there to prevent issu
 - [x] Finish `/upload` page
 - [x] Finish `/browse` page
 - [ ] Add authentication for uploading
-- [ ] Cleanup error handling
+- [x] Cleanup error handling
 - [x] Issues with missing folder on startup
   - [x] Issues with no files on startup
 - [x] Issues with missing tmp folder
