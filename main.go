@@ -78,10 +78,6 @@ func requestHandler(ctx *fasthttp.RequestCtx) {
 	case bytes.Equal(path, faviconPath):
 		ctx.Response.Header.SetStatusCode(fasthttp.StatusNotFound)
 
-	// Serve images on /images/
-	case bytes.HasPrefix(path, imgPath):
-		imgHandler(ctx)
-
 	// Handle css styles on /css/
 	case bytes.HasPrefix(path, cssPath):
 		content := GetCachedContent(ctx, cssMime)
@@ -95,6 +91,10 @@ func requestHandler(ctx *fasthttp.RequestCtx) {
 		if len(content) > 0 {
 			_, _ = fmt.Fprint(ctx, content)
 		}
+
+	// Serve images on /images/
+	case bytes.HasPrefix(path, imgPath):
+		imgHandler(ctx)
 
 	// Handle the api on /api/
 	case bytes.HasPrefix(path, apiPath):
@@ -131,6 +131,7 @@ func setCacheHeaders(ctx *fasthttp.RequestCtx) {
 func handleDebug(ctx *fasthttp.RequestCtx) {
 	if *debug {
 		fileCache = LoadAllCaches() // re-read html caches for easier debugging, worse performance
+		UpdateBrowseHtmlCache()     // re-create gallery html
 		fmt.Println("")
 		log.Printf("Path: %s", ctx.Path())
 		ctx.Request.Header.VisitAll(func(key, value []byte) {

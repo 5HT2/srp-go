@@ -7,11 +7,12 @@ import (
 )
 
 var (
-	imageColors map[string]string // image hash, color hex
-	fileCache   = LoadAllCaches() // file path, file content
-	cssMime     = "text/css; charset=utf-8"
-	htmlMime    = "text/html; charset=utf-8"
-	svgMime     = "image/svg+xml"
+	imageColors   map[string]string // image hash, color hex
+	fileCache     = LoadAllCaches() // file path, file content
+	cssMime       = "text/css; charset=utf-8"
+	htmlMime      = "text/html; charset=utf-8"
+	svgMime       = "image/svg+xml"
+	browseGallery = "www/html/browse_gallery.html"
 )
 
 func GetColor(image string) string {
@@ -53,7 +54,7 @@ func GetCachedContent(ctx *fasthttp.RequestCtx, mime string) string {
 
 	content = strings.ReplaceAll(content, "SERVER_NAME", string(ctx.Host()))
 	content = strings.Replace(content, "var(--color-placeholder)", "#"+*browseImgColor, 1)
-	content = strings.Replace(content, "ALL_GALLERY_ITEMS", GetBrowseImagesHtml(), 1)
+	content = strings.Replace(content, "ALL_GALLERY_ITEMS", fileCache[browseGallery], 1)
 	return content
 }
 
@@ -74,4 +75,17 @@ func LoadAllCaches() map[string]string {
 	}
 
 	return cache
+}
+
+// UpdateBrowseHtmlCache will format the list of images into a list of gallery html for each image we have
+func UpdateBrowseHtmlCache() {
+	template := "<a class=\"gallery-item\" data-src=\"\" data-sub-html=\"\"> <img class=\"img-responsive\" src=\"/images/IMAGE_HASH\" alt=\"IMAGE_HASH\"/> </a>"
+	var galleryImages []string
+
+	for _, img := range images {
+		content := strings.Replace(template, "IMAGE_HASH", img, 2)
+		galleryImages = append(galleryImages, content)
+	}
+
+	fileCache[browseGallery] = strings.Join(galleryImages[:], "\n    ")
 }
