@@ -9,8 +9,14 @@
     <noscript> <!-- fall back for non-js -->
         <link rel="stylesheet" href="/css/upload.css">
     </noscript>
-    <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.6/build/pure-min.css"
-          integrity="sha384-Uu6IeWbM+gzNVXJcM9XV3SohHtmWE+3VGi496jvgX1jyvDTXfdK+rfZc8C1Aehk5" crossorigin="anonymous">
+    <link rel="preload" href="https://unpkg.com/purecss@2.0.6/build/pure-min.css"
+          integrity="sha384-Uu6IeWbM+gzNVXJcM9XV3SohHtmWE+3VGi496jvgX1jyvDTXfdK+rfZc8C1Aehk5"
+          crossorigin="anonymous" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript> <!-- fall back for non-js -->
+        <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.6/build/pure-min.css"
+              integrity="sha384-Uu6IeWbM+gzNVXJcM9XV3SohHtmWE+3VGi496jvgX1jyvDTXfdK+rfZc8C1Aehk5"
+              crossorigin="anonymous">
+    </noscript>
     <script src="https://kit.fontawesome.com/cdcf7dd448.js" crossorigin="anonymous"></script>
     <script>
         let file = null
