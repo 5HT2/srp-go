@@ -34,28 +34,11 @@ after you have uploaded a few pictures. The sample file is there to prevent issu
 
 ## TODO:
 
-- [x] Add Makefile
-    - [x] Add Dockerfile
-    - [x] Add `.dockerignore`
-    - [x] Add Github Actions
-    - [x] Add codefactor
-    - [x] Add badges
-- [x] Add usage instructions
-- [x] Finish `/upload` page
-- [x] Finish `/browse` page
 - [ ] Add authentication for uploading
-- [x] Cleanup error handling
-- [x] Issues with missing folder on startup
-    - [x] Issues with no files on startup
-- [x] Issues with missing tmp folder
-- [x] Issues with missing img folder
-- [x] Issues with safety when deleting an image
-- [x] Fix image color selection
 - [ ] Add Discord embeds
 - [ ] Add favicon
 - [ ] Switch to a different prominent color library, because the current one doesn't support webp
     - [ ] Switch to webp for saving images
-- [x] Add EXIF removing
 
 ## License
 
