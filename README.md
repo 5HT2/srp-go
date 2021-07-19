@@ -24,6 +24,10 @@ To run:
 ./srp-go -addr=localhost:6060 -debug=true
 ```
 
+I recommend deleting [`sample.jpg`](https://github.com/l1ving/srp-go/blob/master/www/content/images/sample.jpg)
+after you have uploaded a few pictures. The sample file is there to prevent issues when first testing 
+(needing an image to serve on `/`, to generate a sample color for, etc).
+
 ## TODO:
 
 - [x] Add Makefile
@@ -37,10 +41,10 @@ To run:
 - [x] Finish `/browse` page
 - [ ] Add authentication for uploading
 - [ ] Cleanup error handling
-- [ ] Issues with missing folder on startup
-  - [ ] Issues with no files on startup
+- [x] Issues with missing folder on startup
+  - [x] Issues with no files on startup
 - [x] Issues with missing tmp folder
-- [ ] Issues with missing img folder
+- [x] Issues with missing img folder
 - [x] Issues with safety when deleting an image
 - [x] Fix image color selection
 - [ ] Add Discord embeds
