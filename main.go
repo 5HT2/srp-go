@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"math/rand"
+	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -47,6 +48,8 @@ func main() {
 	if *useTls {
 		protocol += "s"
 	}
+
+	checkMissingDirs()
 
 	log.Printf("- Running srp-go on " + protocol + "://" + *addr)
 
@@ -137,5 +140,23 @@ func handleDebug(ctx *fasthttp.RequestCtx) {
 		ctx.Request.Header.VisitAll(func(key, value []byte) {
 			log.Printf("%v: %v", string(key), string(value))
 		})
+	}
+}
+
+// checkMissingDirs wil check for missing directories (side-effect from git, empty dirs don't get committed)
+func checkMissingDirs() {
+	// Check if tmp folder exists. Technically only needed for non-Docker testing
+	if _, err := os.Stat("www/content/tmp/"); os.IsNotExist(err) {
+		if err != nil {
+			log.Printf("- Error checking for www/content/tmp/ folder: %v", err)
+		}
+
+		err = os.Mkdir("www/content/tmp/", os.FileMode(0700))
+		if err != nil {
+			log.Fatalf("- Error making www/content/tmp/ folder: %v", err)
+			return
+		}
+
+		log.Printf("- Created www/content/tmp/ folder")
 	}
 }
