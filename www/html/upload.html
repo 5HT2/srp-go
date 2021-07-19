@@ -17,7 +17,6 @@
               integrity="sha384-Uu6IeWbM+gzNVXJcM9XV3SohHtmWE+3VGi496jvgX1jyvDTXfdK+rfZc8C1Aehk5"
               crossorigin="anonymous">
     </noscript>
-    <script src="https://kit.fontawesome.com/cdcf7dd448.js" crossorigin="anonymous"></script>
     <script>
         let file = null
 
@@ -66,12 +65,22 @@
         .browse-button {
             border-radius: 5px;
         }
+
+        .upload-button-icon {
+            display: inline-block;
+            font-size: inherit;
+            height: 1em;
+            overflow: visible;
+            vertical-align: -.125em;
+            width: 1em;
+            margin-right: 0.3em;
+        }
         </style>
         <div class="main-form">
             <input type="file" id="selected-file" accept="image/*" onchange="loadFile(event)"
                    class="browse-button pure-button pure-button-primary">
             <button type="submit" onclick="submitFile();" class="round-button pure-button pure-button-primary">
-                <i class="fa fa-upload"></i> Upload
+                <img src="/svg/upload.svg" alt="upload button" class="upload-button-icon"/>Upload
             </button>
         </div>
         <img class="output-img" id="output"/>
