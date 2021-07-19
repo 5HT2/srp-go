@@ -5,7 +5,10 @@
     <meta name="viewport" content="width=device-width,height=device-height,initial-scale=1">
     <title>SERVER_NAME/browse</title>
     <link rel="icon" type="image/png" href="/favicon.ico">
-    <link rel="stylesheet" href="/css/browse.css">
+    <link rel="preload" href="/css/browse.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript> <!-- fall back for non-js -->
+        <link rel="stylesheet" href="/css/browse.css">
+    </noscript>
     <link rel="stylesheet" href="https://unpkg.com/justifiedGallery@3.8.1/dist/css/justifiedGallery.min.css"
           integrity="sha512-CRFv/YVJyElHXTiMgnhWKd2f04Hd/BUJkwcyqYmlpL1ugSYW23nNRazLk960mlz7dugTrETCGGjcsnspPOS6qA=="
           crossorigin="anonymous">
