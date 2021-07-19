@@ -48,26 +48,9 @@ func MainImageColor(image string) string {
 	return col
 }
 
-// UpdateImageCache opens the www/images directory and caches a list of FileInfos
-func UpdateImageCache() []string {
-	dir := "www/content/images/"
-	dirOpen, _ := os.Open(dir)
-	tmpImages, err := dirOpen.Readdir(0)
-	if err != nil {
-		panic(err)
-	}
-
-	var imageNames []string
-	for _, f := range tmpImages {
-		imageNames = append(imageNames, f.Name())
-	}
-
-	return imageNames
-}
-
 // GetRandomImage chooses a random image name from the image cache
 func GetRandomImage() string {
-	return images[rGen.Intn(len(images))]
+	return imageCache[rGen.Intn(len(imageCache))]
 }
 
 // ImageHandler is our own RequestHandler with a CacheDuration of 0

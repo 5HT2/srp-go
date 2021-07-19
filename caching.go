@@ -3,12 +3,14 @@ package main
 import (
 	"github.com/valyala/fasthttp"
 	"log"
+	"os"
 	"strings"
 )
 
 var (
 	imageColors  map[string]string // image hash, color hex
 	fileCache    = LoadAllCaches() // file path, file content
+	imageCache   = LoadImageCache()
 	galleryCache = LoadGalleryCache()
 	cssMime      = "text/css; charset=utf-8"
 	htmlMime     = "text/html; charset=utf-8"
@@ -17,7 +19,7 @@ var (
 
 func GetColor(image string) string {
 	if len(imageColors) == 0 { // TODO: we need some better way to handle this
-		imageColors = make(map[string]string, len(images))
+		imageColors = make(map[string]string, len(imageCache))
 	}
 
 	color := imageColors[image]
@@ -77,15 +79,32 @@ func LoadAllCaches() map[string]string {
 	return cache
 }
 
-// LoadGalleryCache will format the list of images into a list of gallery html for each image we have
+// LoadGalleryCache will format the list of imageCache into a list of gallery html for each image we have
 func LoadGalleryCache() string {
 	template := "<a class=\"gallery-item\" data-src=\"\" data-sub-html=\"\"> <img class=\"img-responsive\" src=\"/images/IMAGE_HASH\" alt=\"IMAGE_HASH\"/> </a>"
 	var galleryImages []string
 
-	for _, img := range images {
+	for _, img := range imageCache {
 		content := strings.Replace(template, "IMAGE_HASH", img, 2)
 		galleryImages = append(galleryImages, content)
 	}
 
 	return strings.Join(galleryImages[:], "\n    ")
+}
+
+// LoadImageCache opens the www/images directory and caches a list of FileInfos
+func LoadImageCache() []string {
+	dir := "www/content/images/"
+	dirOpen, _ := os.Open(dir)
+	tmpImages, err := dirOpen.Readdir(0)
+	if err != nil {
+		panic(err)
+	}
+
+	var imageNames []string
+	for _, f := range tmpImages {
+		imageNames = append(imageNames, f.Name())
+	}
+
+	return imageNames
 }

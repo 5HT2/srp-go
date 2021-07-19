@@ -56,7 +56,7 @@ func handleUpload(ctx *fasthttp.RequestCtx) {
 
 		// Update image cache after uploading a new image
 		// we want to check if it's missing in case the user uploads the same image more than once
-		images = AppendIfMissing(images, image)
+		imageCache = AppendIfMissing(imageCache, image)
 		// Update the browse gallery cache after uploading
 		galleryCache = LoadGalleryCache()
 	} else {

@@ -26,7 +26,6 @@ var (
 	// TODO: Remove when auth added
 	allowUpload = flag.Bool("allowupload", false, "Allow disabling upload (temporary)")
 
-	images      = UpdateImageCache()
 	rootPath    = []byte("/")
 	cssPath     = []byte("/css/")
 	svgPath     = []byte("/svg/")
