@@ -59,10 +59,9 @@ func GetCachedContent(ctx *fasthttp.RequestCtx, mime string) string {
 
 	// Unsure if I can get rid of this somehow... seems that you can change the window title with JS but that's it
 	content = strings.ReplaceAll(content, "SERVER_NAME", string(ctx.Host()))
-	if path == "www/html/browse.html" { // TODO: Find a way to replace this
-		content = strings.Replace(content, "var(--color-placeholder)", "#"+*browseImgColor, 1)
-		content = strings.Replace(content, "ALL_GALLERY_ITEMS", galleryCache, 1)
-	}
+	// TODO: Find a way to replace this
+	content = strings.Replace(content, "var(--color-placeholder)", "#"+*browseImgColor, 1)
+	content = strings.Replace(content, "ALL_GALLERY_ITEMS", galleryCache, 1)
 	return content
 }
 
