@@ -4,6 +4,9 @@ import (
 	"bytes"
 	"flag"
 	"fmt"
+	"github.com/joho/godotenv"
+	"golang.org/x/oauth2"
+	"golang.org/x/oauth2/github"
 	"log"
 	"math/rand"
 	"os"
@@ -23,6 +26,7 @@ var (
 	maxBodySize    = flag.Int("maxbodysize", 100*1024*1024, "MaxRequestBodySize, defaults to 100MiB")
 	browseImgColor = flag.String("browseimgcolor", "eaffe8", "Background color to use for browse page")
 	debug          = flag.Bool("debug", false, "Enable debug logging")
+	liveUrl        = ""
 	// TODO: Remove when auth added
 	allowUpload = flag.Bool("allowupload", false, "Allow disabling upload (temporary)")
 
@@ -33,7 +37,7 @@ var (
 	imgPath     = []byte("/images/")
 	faviconPath = []byte("/favicon.ico")
 
-	imgHandler = ImageHandler("www/content/images/", 1)
+	imgHandler = ImageHandler("config/images/", 1)
 
 	rSrc = rand.NewSource(time.Now().Unix())
 	rGen = rand.New(rSrc) // initialize local pseudorandom generator
@@ -42,15 +46,8 @@ var (
 func main() {
 	flag.Parse()
 	log.Print("- Loading srp-go")
-
-	protocol := "http"
-	if *useTls {
-		protocol += "s"
-	}
-
-	checkMissingDirs()
-
-	log.Printf("- Running srp-go on " + protocol + "://" + *addr)
+	setup()
+	log.Printf("- Running srp-go on %s", liveUrl)
 
 	s := &fasthttp.Server{
 		Handler:            requestHandler,
@@ -142,20 +139,45 @@ func handleDebug(ctx *fasthttp.RequestCtx) {
 	}
 }
 
-// checkMissingDirs wil check for missing directories (side-effect from git, empty dirs don't get committed)
+// setup will run whatever setup functions should be performed upon starting srp-go
+func setup() {
+	// Load env variables
+	err := godotenv.Load("config/.env")
+	checkMissingDirs()
+	// Fix missing dirs
+	if err != nil {
+		log.Printf("Error loading .env file: %v", err)
+	}
+	// Set config options now that the env is loaded
+	liveUrl = os.Getenv("LIVE_URL")
+	webhookUrl = os.Getenv("WEBHOOK_URL")
+
+	// Set the proper oauthConfig now that flags and env have been loaded
+	oauthClient = os.Getenv("OAUTH_CLIENT_ID")
+	oauthSecret = os.Getenv("OAUTH_CLIENT_SECRET")
+	oauthConfig = &oauth2.Config{
+		RedirectURL:  liveUrl + "/api/auth/callback",
+		ClientID:     oauthClient,
+		ClientSecret: oauthSecret,
+		Scopes:       []string{""},
+		Endpoint:     github.Endpoint,
+	}
+}
+
+// checkMissingDirs will check for missing directories (side effect from git, empty dirs don't get committed)
 func checkMissingDirs() {
 	// Check if tmp folder exists. Technically only needed for non-Docker testing
-	if _, err := os.Stat("www/content/tmp/"); os.IsNotExist(err) {
+	if _, err := os.Stat("config/tmp/"); os.IsNotExist(err) {
 		if err != nil {
-			log.Printf("- Error checking for www/content/tmp/ folder: %v", err)
+			log.Printf("- Error checking for config/tmp/ folder: %v", err)
 		}
 
-		err = os.Mkdir("www/content/tmp/", os.FileMode(0700))
+		err = os.Mkdir("config/tmp/", os.FileMode(0700))
 		if err != nil {
-			log.Fatalf("- Error making www/content/tmp/ folder: %v", err)
+			log.Fatalf("- Error making config/tmp/ folder: %v", err)
 			return
 		}
 
-		log.Printf("- Created www/content/tmp/ folder")
+		log.Printf("- Created config/tmp/ folder")
 	}
 }

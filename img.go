@@ -64,8 +64,8 @@ func ImageHandler(root string, stripSlashes int) fasthttp.RequestHandler {
 	return fs.NewRequestHandler()
 }
 
-// SaveFinal will compress and convert the image from path inside the www/content/tmp/ folder, and save the final
-// result inside the www/content/images/ folder
+// SaveFinal will compress and convert the image from path inside the config/tmp/ folder, and save the final
+// result inside the config/images/ folder
 func SaveFinal(path string) (string, error) {
 	buffer, err := ConvertAndCompress(path)
 	compressedPath := path + "-min"
@@ -107,7 +107,7 @@ func SaveFinal(path string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	err = os.Rename(compressedPath, "www/content/images/"+hash)
+	err = os.Rename(compressedPath, "config/images/"+hash)
 	if err != nil {
 		return "", err
 	}

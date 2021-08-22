@@ -16,6 +16,6 @@ fi
 
 docker run --name srp-go \
   -e ADDRESS="localhost:6012" \
-  --mount type=bind,source="$SRP_PATH",target=/srp-go/www/content \
+  --mount type=bind,source="$SRP_PATH",target=/srp-go/config \
   --network host -d \
   l1ving/srp-go

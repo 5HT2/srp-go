@@ -25,7 +25,7 @@ func GetColor(image string) string {
 	color := imageColors[image]
 
 	if len(color) == 0 {
-		newColor := MainImageColor("www/content/images/" + image)
+		newColor := MainImageColor("config/images/" + image)
 		imageColors[image] = newColor
 		return newColor
 	}
@@ -96,7 +96,7 @@ func LoadGalleryCache() string {
 
 // LoadImageCache opens the www/images directory and caches a list of FileInfos
 func LoadImageCache() []string {
-	dir := "www/content/images/"
+	dir := "config/images/"
 	dirOpen, _ := os.Open(dir)
 	tmpImages, err := dirOpen.Readdir(0)
 	if err != nil {

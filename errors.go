@@ -13,6 +13,10 @@ func HandleGeneric(ctx *fasthttp.RequestCtx, status int, message string) {
 	fmt.Fprintf(ctx, "%v %s\n", status, message)
 }
 
+func HandleWrongMethod(ctx *fasthttp.RequestCtx) {
+	HandleGeneric(ctx, fasthttp.StatusMethodNotAllowed, "Cannot "+string(ctx.Method())+" on "+string(ctx.Path()))
+}
+
 func HandleForbidden(ctx *fasthttp.RequestCtx) {
 	ctx.Response.SetStatusCode(fasthttp.StatusForbidden)
 	ctx.Response.Header.Set("X-Server-Message", "403 Forbidden")

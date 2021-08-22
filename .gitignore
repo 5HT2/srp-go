@@ -1,4 +1,4 @@
 srp-go
 .idea/
-www/content/tmp/
-
+config/tmp/
+config/.env

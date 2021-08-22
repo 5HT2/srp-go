@@ -7,6 +7,7 @@ srp-go: clean
 	go get -u github.com/valyala/fasthttp
 	go get -u github.com/h2non/bimg
 	go get -u github.com/EdlinOrg/prominentcolor
+	go get -u golang.org/x/oauth2
 	go build
 
 clean:

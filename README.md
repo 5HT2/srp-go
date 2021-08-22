@@ -28,9 +28,29 @@ To run:
 ./srp-go -addr=localhost:6060 -debug=true
 ```
 
-I recommend deleting [`sample.jpg`](https://github.com/l1ving/srp-go/blob/master/www/content/images/sample.jpg)
+I recommend deleting [`sample.jpg`](https://github.com/l1ving/srp-go/blob/master/config/images/sample.jpg)
 after you have uploaded a few pictures. The sample file is there to prevent issues when first testing
 (needing an image to serve on `/`, to generate a sample color for, etc).
+
+## OAuth
+
+In order to set up OAuth, follow [these](https://docs.github.com/en/developers/apps/building-oauth-apps/creating-an-oauth-app)
+instructions to create a GitHub OAuth app.
+
+You will want to 
+- Set `LIVE_URL` to the accessible url of your site
+  - Eg: `https://frog.pics`
+  - Or: `http://localhost:6060` for a testing environment
+- Enable "Request user authorization (OAuth)"
+- Enable the Read-Only option for User Email addresses (aka `user:email`)
+
+Create a `.env` file inside your config folder, with the following format:
+```bash
+OAUTH_CLIENT_ID=Iv1.some_client_id
+OAUTH_CLIENT_SECRET=your_client_secret
+LIVE_URL=http://localhost:6060
+WEBHOOK_URL= # optional discord webhook url for posting specific events
+```
 
 ## TODO:
 
@@ -38,12 +58,13 @@ after you have uploaded a few pictures. The sample file is there to prevent issu
 - [ ] Add Discord embeds
 - [ ] Add favicon
 - [ ] Switch to a different prominent color library, because the current one doesn't support webp
-  - [ ] Switch to webp for saving images
+    - [ ] Switch to webp for saving images
+- [ ] Finalize webhook support
 
 ## License
 
 This project is licensed under [ISC](https://github.com/l1ving/srp-go/blob/master/LICENSE.md).
 
-The [`sample.jpg`](https://github.com/l1ving/srp-go/blob/master/www/content/images/sample.jpg) file is licensed under
+The [`sample.jpg`](https://github.com/l1ving/srp-go/blob/master/config/images/sample.jpg) file is licensed under
 Creative Commons Attribution-Share Alike, you can find the original file
 [here](https://commons.wikimedia.org/wiki/File:Bufo_americanus_PJC1.jpg).
