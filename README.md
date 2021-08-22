@@ -60,6 +60,7 @@ WEBHOOK_URL= # optional discord webhook url for posting specific events
 - [ ] Switch to a different prominent color library, because the current one doesn't support webp
   - [ ] Switch to webp for saving images
 - [ ] Finalize webhook support
+- [ ] Image attribution support
 
 ## License
 
