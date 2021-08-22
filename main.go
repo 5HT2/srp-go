@@ -32,6 +32,7 @@ var (
 	apiPath     = []byte("/api/")
 	imgPath     = []byte("/images/")
 	faviconPath = []byte("/favicon.ico")
+	browsePath  = []byte("/browse")
 
 	imgHandler = ImageHandler("config/images/", 1)
 
@@ -66,7 +67,6 @@ func main() {
 // Main request handler
 func requestHandler(ctx *fasthttp.RequestCtx) {
 	path := ctx.Path()
-	setCacheHeaders(ctx)
 	handleDebug(ctx)
 
 	switch {
@@ -94,10 +94,16 @@ func requestHandler(ctx *fasthttp.RequestCtx) {
 
 	// Handle the api on /api/
 	case bytes.HasPrefix(path, apiPath):
+		setCacheHeaders(ctx)
 		HandleApi(ctx)
 
 	// Default to serving html on all the other paths
 	default:
+		// We don't want to browse gallery html to be cached, since it is modified with string.Replace()
+		// TODO: When browse behavior changes, this may be unnecessary
+		if bytes.Equal(path, browsePath) {
+			setCacheHeaders(ctx)
+		}
 		content := GetCachedContent(ctx, htmlMime)
 		if len(content) > 0 {
 			_, _ = fmt.Fprint(ctx, content)
