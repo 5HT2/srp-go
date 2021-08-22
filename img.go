@@ -45,8 +45,10 @@ func LoadImage(path string) (image.Image, error) {
 }
 
 // GetRandomImage chooses a random image name from the image cache
-func GetRandomImage() string {
-	return imageCache[rGen.Intn(len(imageCache))]
+func GetRandomImage() (string, string) {
+	hash := imageCache[rGen.Intn(len(imageCache))]
+	color := GetColor(hash)
+	return hash, color
 }
 
 // ImageHandler is our own RequestHandler with a CacheDuration of 0

@@ -15,6 +15,7 @@ import (
 var (
 	authPath         = "/api/auth"
 	authCallbackPath = "/api/auth/callback"
+	randomPath       = "/api/random"
 	uploadPath       = "/api/upload"
 
 	oauthConfig = &oauth2.Config{} // Set in main.go after flags have been parsed
@@ -39,7 +40,7 @@ func HandleApi(ctx *fasthttp.RequestCtx) {
 	path := string(ctx.Path())
 
 	switch path {
-	case authPath, authCallbackPath:
+	case authPath, authCallbackPath, randomPath:
 		if !ctx.IsGet() {
 			HandleWrongMethod(ctx)
 			return
@@ -58,7 +59,51 @@ func HandleApi(ctx *fasthttp.RequestCtx) {
 		handleAuth(ctx)
 	case authCallbackPath:
 		handleAuthCallback(ctx)
+	case randomPath:
+		handleRandom(ctx)
 	}
+}
+
+// handleRandom handles the query parameters for /api/random
+func handleRandom(ctx *fasthttp.RequestCtx) {
+	format := string(ctx.FormValue("format"))
+
+	if format == "css" {
+		handleDynamicCss(ctx)
+	} else {
+		handleRandomJson(ctx)
+	}
+}
+
+// handleDynamicCss returns the css to insert a random image with its background color onto the main page
+func handleDynamicCss(ctx *fasthttp.RequestCtx) {
+	image, color := GetRandomImage()
+
+	// this is probably the "easiest" way to do it without modifying html... use a dynamic @import stylesheet
+	ctx.Response.Header.SetContentType(jsonMime)
+	_, _ = fmt.Fprintf(ctx,
+		"body {\n    background-color: #%s;\n}\n\ndiv.img {\n    content: url('/images/%s');\n}\n",
+		color, image)
+}
+
+// handleRandomJson returns the json form of a random image, usually displayed on the main page
+func handleRandomJson(ctx *fasthttp.RequestCtx) {
+	image, color := GetRandomImage()
+
+	// TODO: image attribution and author
+	body := map[string]string{
+		"image_name":   image,
+		"image_url":    liveUrl + "/images/" + image,
+		"median_color": color}
+	json, err := json2.MarshalIndent(body, "", "    ")
+
+	if err != nil {
+		HandleInternalServerError(ctx, "Error formatting json", err)
+		return
+	}
+
+	ctx.Response.Header.SetContentType(jsonMime)
+	_, _ = fmt.Fprintf(ctx, "%s\n", json)
 }
 
 // handleAuth creates a cookie, sets the state and redirects the user to their auth code
@@ -110,13 +155,13 @@ func handleAuthCallback(ctx *fasthttp.RequestCtx) {
 		return // err is handled inside method
 	}
 
-	fmt.Fprint(ctx, body)
+	_, _ = fmt.Fprint(ctx, body)
 	// TODO: implement webhook posting and "logged in page", this only prints the users information currently
 }
 
 func getGithubData(ctx *fasthttp.RequestCtx, accessToken string) (string, error) {
 	req := fasthttp.AcquireRequest()
-	req.Header.Set("Accept", "application/json")
+	req.Header.Set("Accept", jsonMime)
 	req.Header.Set("Authorization", "token "+accessToken)
 	req.SetRequestURI(ghApiUserUrl)
 	res := fasthttp.AcquireResponse()
@@ -140,8 +185,8 @@ func generateGithubAuthResponse(ctx *fasthttp.RequestCtx, code string) (ghAuthRe
 	req := fasthttp.AcquireRequest()
 	req.SetBody(json)
 	req.Header.SetMethod(fasthttp.MethodPost)
-	req.Header.SetContentType("application/json")
-	req.Header.Set("Accept", "application/json")
+	req.Header.SetContentType(jsonMime)
+	req.Header.Set("Accept", jsonMime)
 	req.SetRequestURI(ghAccessTokenUrl)
 	res := fasthttp.AcquireResponse()
 	if err := fasthttp.Do(req, res); err != nil {

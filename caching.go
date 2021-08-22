@@ -14,6 +14,7 @@ var (
 	galleryCache = LoadGalleryCache()
 	cssMime      = "text/css; charset=utf-8"
 	htmlMime     = "text/html; charset=utf-8"
+	jsonMime     = "application/json"
 	svgMime      = "image/svg+xml"
 )
 
@@ -56,9 +57,12 @@ func GetCachedContent(ctx *fasthttp.RequestCtx, mime string) string {
 		return ""
 	}
 
+	// Unsure if I can get rid of this somehow... seems that you can change the window title with JS but that's it
 	content = strings.ReplaceAll(content, "SERVER_NAME", string(ctx.Host()))
-	content = strings.Replace(content, "var(--color-placeholder)", "#"+*browseImgColor, 1)
-	content = strings.Replace(content, "ALL_GALLERY_ITEMS", galleryCache, 1)
+	if path == "www/html/browse.html" { // TODO: Find a way to replace this
+		content = strings.Replace(content, "var(--color-placeholder)", "#"+*browseImgColor, 1)
+		content = strings.Replace(content, "ALL_GALLERY_ITEMS", galleryCache, 1)
+	}
 	return content
 }
 

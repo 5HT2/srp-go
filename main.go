@@ -11,7 +11,6 @@ import (
 	"math/rand"
 	"os"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/valyala/fasthttp"
@@ -30,7 +29,6 @@ var (
 	// TODO: Remove when auth added
 	allowUpload = flag.Bool("allowupload", false, "Allow disabling upload (temporary)")
 
-	rootPath    = []byte("/")
 	cssPath     = []byte("/css/")
 	svgPath     = []byte("/svg/")
 	apiPath     = []byte("/api/")
@@ -99,17 +97,9 @@ func requestHandler(ctx *fasthttp.RequestCtx) {
 	case bytes.HasPrefix(path, apiPath):
 		HandleApi(ctx)
 
-	// Default to serving html on all other paths
+	// Default to serving html on all the other paths
 	default:
 		content := GetCachedContent(ctx, htmlMime)
-
-		if bytes.Equal(path, rootPath) {
-			image := GetRandomImage()
-			ctx.Response.Header.Set("X-Image-Hash", image)
-			content = strings.Replace(content, "IMAGE_HASH", image, 2)
-			content = strings.Replace(content, "#000000", GetColor(image), 1)
-		}
-
 		if len(content) > 0 {
 			_, _ = fmt.Fprint(ctx, content)
 		}
