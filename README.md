@@ -52,6 +52,30 @@ LIVE_URL=http://localhost:6060
 WEBHOOK_URL= # optional discord webhook url for posting specific events
 ```
 
+## API
+
+The full list of accessible API endpoints can be found inside [`api.go`](https://github.com/l1ving/srp-go/blob/master/api.go).
+
+The `/api/random` endpoint will return the properties of a randomly-selected image in json (by default), like so:
+```json
+{
+    "image_name": "sample.jpg",
+    "image_url": "http://localhost:6060/images/sample.jpg",
+    "median_color": "868232"
+}
+```
+
+You can also add `?format=css` to get the css version if you really want:
+```css
+body {
+    background-color: #868232;
+}
+
+div.img {
+    content: url('/images/sample.jpg');
+}
+```
+
 ## TODO:
 
 - [ ] Add authentication for uploading
