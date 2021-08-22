@@ -40,9 +40,10 @@ In order to set up OAuth, follow [these](https://docs.github.com/en/developers/a
 instructions to create a GitHub OAuth app.
 
 You will want to 
-- Set `LIVE_URL` to the accessible url of your site
+- Set `LIVE_URL` to the accessible url of your site in (`.env`)
   - Eg: `https://frog.pics`
   - Or: `http://localhost:6060` for a testing environment
+- Set the Callback URL to your `LIVE_URL` + `/api/auth/callback`
 - Enable "Request user authorization (OAuth)"
 - Enable the Read-Only option for User Email addresses (aka `user:email`)
 
