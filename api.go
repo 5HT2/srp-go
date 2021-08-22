@@ -25,7 +25,6 @@ var (
 
 	ghAccessTokenUrl = "https://github.com/login/oauth/access_token"
 	ghApiUserUrl     = "https://api.github.com/user"
-	webhookUrl       = "" // Set in main.go after env is parsed
 )
 
 type ghAuthResponse struct {
@@ -34,6 +33,13 @@ type ghAuthResponse struct {
 	AccessToken      string `json:"access_token"`
 	TokenType        string `json:"token_type"`
 	Scope            string `json:"scope"`
+}
+
+type ghUserResponse struct {
+	AvatarUrl string `json:"avatar_url"`
+	HtmlUrl   string `json:"html_url"`
+	Id        int64  `json:"id"`
+	Name      string `json:"name"`
 }
 
 func HandleApi(ctx *fasthttp.RequestCtx) {
@@ -155,11 +161,19 @@ func handleAuthCallback(ctx *fasthttp.RequestCtx) {
 		return // err is handled inside method
 	}
 
-	_, _ = fmt.Fprint(ctx, body)
+	var ghUser ghUserResponse
+	err = json2.Unmarshal(body, &ghUser)
+	if err != nil {
+		HandleInternalServerError(ctx, "Error decoding user response json", err)
+		return
+	}
+
+	_, _ = fmt.Fprint(ctx, string(body)) // TODO: for debugging
+	PostMessage(ctx, ghUser)
 	// TODO: implement webhook posting and "logged in page", this only prints the users information currently
 }
 
-func getGithubData(ctx *fasthttp.RequestCtx, accessToken string) (string, error) {
+func getGithubData(ctx *fasthttp.RequestCtx, accessToken string) ([]byte, error) {
 	req := fasthttp.AcquireRequest()
 	req.Header.Set("Accept", jsonMime)
 	req.Header.Set("Authorization", "token "+accessToken)
@@ -168,11 +182,12 @@ func getGithubData(ctx *fasthttp.RequestCtx, accessToken string) (string, error)
 	if err := fasthttp.Do(req, res); err != nil {
 		fasthttp.ReleaseRequest(req)
 		HandleInternalServerError(ctx, "Error getting Github user from Github API", err)
-		return "", err
+		return *&[]byte{}, err
 	}
 	fasthttp.ReleaseRequest(req)
 	resBody := res.Body()
-	body := string(resBody)
+	body := make([]byte, len(resBody))
+	copy(body, resBody)           // copy bytes to unused var
 	fasthttp.ReleaseResponse(res) // When done with resBody
 
 	return body, nil

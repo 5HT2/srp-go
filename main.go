@@ -147,10 +147,9 @@ func setup() {
 	// Set config options now that the env is loaded
 	liveUrl = os.Getenv("LIVE_URL")
 	webhookUrl = os.Getenv("WEBHOOK_URL")
-	browseImgColor = os.Getenv("BROWSE_PAGE_COLOR")
-
-	if len(browseImgColor) == 0 {
-		browseImgColor = "#eaffe8"
+	browsePageColorTmp := os.Getenv("BROWSE_PAGE_COLOR")
+	if len(browsePageColorTmp) > 0 {
+		browsePageColor = browsePageColorTmp
 	}
 	// Set the proper oauthConfig now that flags and env have been loaded
 	oauthClient = os.Getenv("OAUTH_CLIENT_ID")

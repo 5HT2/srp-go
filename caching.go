@@ -24,7 +24,7 @@ var (
 	defaultFaviconPath = "www/ico/favicon.ico"
 	customFaviconPath  = "config/favicon.ico"
 
-	browseImgColor = "" // Set in main.go after env is parsed
+	browsePageColor = "#eaffe8" // Set in main.go after env is parsed
 )
 
 func GetColor(image string) string {
@@ -69,7 +69,7 @@ func GetCachedContent(ctx *fasthttp.RequestCtx, mime string) string {
 	// Unsure if I can get rid of this somehow... seems that you can change the window title with JS but that's it
 	content = strings.ReplaceAll(content, "SERVER_NAME", string(ctx.Host()))
 	// TODO: Find a way to replace this
-	content = strings.Replace(content, "var(--color-placeholder)", browseImgColor, 1)
+	content = strings.Replace(content, "var(--color-placeholder)", browsePageColor, 1)
 	content = strings.Replace(content, "ALL_GALLERY_ITEMS", galleryCache, 1)
 	return content
 }
