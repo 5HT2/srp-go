@@ -32,6 +32,8 @@ I recommend deleting [`sample.jpg`](https://github.com/l1ving/srp-go/blob/master
 after you have uploaded a few pictures. The sample file is there to prevent issues when first testing
 (needing an image to serve on `/`, to generate a sample color for, etc).
 
+You can also add your own `favicon.ico` inside the `config/` directory, and it will overwrite the default icon.
+
 ## OAuth
 
 In order to set up OAuth, follow [these](https://docs.github.com/en/developers/apps/building-oauth-apps/creating-an-oauth-app)
@@ -49,6 +51,7 @@ Create a `.env` file inside your config folder, with the following format:
 OAUTH_CLIENT_ID=Iv1.some_client_id
 OAUTH_CLIENT_SECRET=your_client_secret
 LIVE_URL=http://localhost:6060
+BROWSE_PAGE_COLOR= # optional color code to use for the /browse page
 WEBHOOK_URL= # optional discord webhook url for posting specific events
 ```
 

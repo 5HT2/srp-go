@@ -2,3 +2,4 @@ srp-go
 .idea/
 config/tmp/
 config/.env
+config/favicon.ico

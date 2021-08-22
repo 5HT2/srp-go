@@ -15,11 +15,16 @@ var (
 	fileCache    = LoadAllCaches() // file path, file content
 	imageCache   = LoadImageCache()
 	galleryCache = LoadGalleryCache()
-	faviconCache = LoadFaviconCache()
+	faviconCache = LoadFaviconCache(customFaviconPath)
 	cssMime      = "text/css; charset=utf-8"
 	htmlMime     = "text/html; charset=utf-8"
 	jsonMime     = "application/json"
 	svgMime      = "image/svg+xml"
+
+	defaultFaviconPath = "www/ico/favicon.ico"
+	customFaviconPath  = "config/favicon.ico"
+
+	browseImgColor = "" // Set in main.go after env is parsed
 )
 
 func GetColor(image string) string {
@@ -64,7 +69,7 @@ func GetCachedContent(ctx *fasthttp.RequestCtx, mime string) string {
 	// Unsure if I can get rid of this somehow... seems that you can change the window title with JS but that's it
 	content = strings.ReplaceAll(content, "SERVER_NAME", string(ctx.Host()))
 	// TODO: Find a way to replace this
-	content = strings.Replace(content, "var(--color-placeholder)", "#"+*browseImgColor, 1)
+	content = strings.Replace(content, "var(--color-placeholder)", browseImgColor, 1)
 	content = strings.Replace(content, "ALL_GALLERY_ITEMS", galleryCache, 1)
 	return content
 }
@@ -129,11 +134,14 @@ func LoadImageCache() []string {
 	return imageNames
 }
 
-// LoadFaviconCache opens www/ico/favicon.ico and caches it as an image.Image
-func LoadFaviconCache() image.Image {
-	f, err := os.Open("www/ico/favicon.ico")
+// LoadFaviconCache tries to load config/favicon.ico and defaults to www/ico/favicon.ico
+func LoadFaviconCache(path string) image.Image {
+	f, err := os.Open(path)
 	if err != nil {
 		log.Printf("Error loading icon file: %s", err)
+		if path != defaultFaviconPath { // Prevent infinite loop by calling itself. Less duplicated code
+			return LoadFaviconCache(defaultFaviconPath)
+		}
 		return nil
 	}
 	defer f.Close()
