@@ -80,7 +80,6 @@ div.img {
 
 - [ ] Add authentication for uploading
 - [ ] Add Discord embeds
-- [ ] Add favicon
 - [ ] Switch to a different prominent color library, because the current one doesn't support webp
   - [ ] Switch to webp for saving images
 - [ ] Finalize webhook support

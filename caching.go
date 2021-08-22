@@ -1,7 +1,10 @@
 package main
 
 import (
+	"github.com/mat/besticon/ico"
 	"github.com/valyala/fasthttp"
+	"image"
+	"image/png"
 	"log"
 	"os"
 	"strings"
@@ -12,6 +15,7 @@ var (
 	fileCache    = LoadAllCaches() // file path, file content
 	imageCache   = LoadImageCache()
 	galleryCache = LoadGalleryCache()
+	faviconCache = LoadFaviconCache()
 	cssMime      = "text/css; charset=utf-8"
 	htmlMime     = "text/html; charset=utf-8"
 	jsonMime     = "application/json"
@@ -65,6 +69,17 @@ func GetCachedContent(ctx *fasthttp.RequestCtx, mime string) string {
 	return content
 }
 
+// HandleCachedFavicon will return the favicon bytes to the client
+func HandleCachedFavicon(ctx *fasthttp.RequestCtx) {
+	if faviconCache == nil {
+		HandleGeneric(ctx, fasthttp.StatusNotFound, "Not Found")
+		return
+	}
+
+	ctx.Response.Header.Set(fasthttp.HeaderContentType, "image/x-icon")
+	_ = png.Encode(ctx.Response.BodyWriter(), faviconCache)
+}
+
 // LoadAllCaches will read all the files in dir and return the map of path:content.
 // The dir variable must have a slash suffix
 func LoadAllCaches() map[string]string {
@@ -112,4 +127,21 @@ func LoadImageCache() []string {
 	}
 
 	return imageNames
+}
+
+// LoadFaviconCache opens www/ico/favicon.ico and caches it as an image.Image
+func LoadFaviconCache() image.Image {
+	f, err := os.Open("www/ico/favicon.ico")
+	if err != nil {
+		log.Printf("Error loading icon file: %s", err)
+		return nil
+	}
+	defer f.Close()
+	img, err := ico.Decode(f)
+	if err != nil {
+		log.Printf("Error loading icon: %s", err)
+		return nil
+	}
+
+	return img
 }

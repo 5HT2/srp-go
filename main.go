@@ -71,9 +71,9 @@ func requestHandler(ctx *fasthttp.RequestCtx) {
 	handleDebug(ctx)
 
 	switch {
-	// Server 404 on /favicon.ico TODO: Add a default favicon
+	// Serve favicon on /favicon.ico
 	case bytes.Equal(path, faviconPath):
-		ctx.Response.Header.SetStatusCode(fasthttp.StatusNotFound)
+		HandleCachedFavicon(ctx)
 
 	// Handle css styles on /css/
 	case bytes.HasPrefix(path, cssPath):
