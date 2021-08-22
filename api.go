@@ -215,7 +215,7 @@ func generateAuthCookie() (*fasthttp.Cookie, string) {
 	rand.Read(b)
 	state := base64.URLEncoding.EncodeToString(b)
 	cookie := fasthttp.Cookie{}
-	//cookie.SetSecure(true) // uncomment in prod
+	//cookie.SetSecure(true) // TODO uncomment in prod
 	cookie.SetKey(cookieName)
 	cookie.SetValue(state)
 	cookie.SetExpire(expiration)
