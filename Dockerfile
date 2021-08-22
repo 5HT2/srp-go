@@ -2,7 +2,7 @@ FROM golang:1.16.5
 
 ARG LIBVIPS_VERSION=8.11.2
 
-RUN mkdir /srp-go
+RUN mkdir -p /srp-go/config
 ADD . /srp-go
 WORKDIR /srp-go
 
