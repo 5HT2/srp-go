@@ -13,13 +13,6 @@ input[type='file'] {
     margin-top: 15px;
 }
 
-.browse-button {
-    min-width: 114px;
-    width: 114px;
-    display: none;
-    margin-right: 10px;
-}
-
 .output-img {
     margin-top: 15px;
     max-height: 80%;
@@ -27,6 +20,31 @@ input[type='file'] {
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
+}
+
+.button-icon {
+    display: inline-block;
+    font-size: inherit;
+    height: 1em;
+    overflow: visible;
+    vertical-align: -.125em;
+    width: 1em;
+    margin-right: 0.3em;
+}
+
+.browse-button-wrapper {
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+}
+
+.browse-button-wrapper input[type=file] {
+    font-size: 100px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0;
+    cursor: pointer;
 }
 
 @media (max-width: 800px) {

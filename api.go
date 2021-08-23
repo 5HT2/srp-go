@@ -170,7 +170,8 @@ func handleAuthCallback(ctx *fasthttp.RequestCtx) {
 		return
 	}
 
-	_, _ = fmt.Fprint(ctx, string(body)) // TODO: for debugging
+	//_, _ = fmt.Fprint(ctx, string(body)) // TODO: for debugging
+	ctx.Redirect("/upload?signed_in=true", fasthttp.StatusTemporaryRedirect) // TODO: Switch this to using cookies
 	PostMessage(ctx, ghUser)
 	// TODO: implement webhook posting and "logged in page", this only prints the users information currently
 }
