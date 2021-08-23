@@ -67,6 +67,8 @@ func HandleApi(ctx *fasthttp.RequestCtx) {
 		handleAuthCallback(ctx)
 	case randomPath:
 		handleRandom(ctx)
+	default:
+		HandleNotFound(ctx)
 	}
 }
 

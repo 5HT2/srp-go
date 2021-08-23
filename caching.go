@@ -61,8 +61,7 @@ func GetCachedContent(ctx *fasthttp.RequestCtx, mime string) string {
 		if *debug {
 			log.Printf("- Error with finding cached content on path \"%s\"", path)
 		}
-		ctx.Response.Header.Set("Content-Type", "text/plain")
-		HandleGeneric(ctx, fasthttp.StatusNotFound, "Not Found")
+		HandleNotFound(ctx)
 		return ""
 	}
 
@@ -77,7 +76,7 @@ func GetCachedContent(ctx *fasthttp.RequestCtx, mime string) string {
 // HandleCachedFavicon will return the favicon bytes to the client
 func HandleCachedFavicon(ctx *fasthttp.RequestCtx) {
 	if faviconCache == nil {
-		HandleGeneric(ctx, fasthttp.StatusNotFound, "Not Found")
+		HandleNotFound(ctx)
 		return
 	}
 
