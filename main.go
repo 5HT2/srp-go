@@ -90,11 +90,13 @@ func requestHandler(ctx *fasthttp.RequestCtx) {
 
 	// Serve images on /images/
 	case bytes.HasPrefix(path, imgPath):
+		// image paths are hashes of said image (meaning, the same url will ALWAYS serve the same image)
+		setCacheHeaders(ctx)
 		imgHandler(ctx)
 
 	// Handle the api on /api/
 	case bytes.HasPrefix(path, apiPath):
-		setCacheHeaders(ctx)
+		setNoCacheHeaders(ctx)
 		HandleApi(ctx)
 
 	// Default to serving html on all the other paths
@@ -102,7 +104,7 @@ func requestHandler(ctx *fasthttp.RequestCtx) {
 		// We don't want to browse gallery html to be cached, since it is modified with string.Replace()
 		// TODO: When browse behavior changes, this may be unnecessary
 		if bytes.Equal(path, browsePath) {
-			setCacheHeaders(ctx)
+			setNoCacheHeaders(ctx)
 		}
 		content := GetCachedContent(ctx, htmlMime)
 		if len(content) > 0 {
@@ -111,8 +113,13 @@ func requestHandler(ctx *fasthttp.RequestCtx) {
 	}
 }
 
-// setCacheHeaders sets the headers to avoid caching
+// setCacheHeaders sets the resource to be cached for up to 1 year
 func setCacheHeaders(ctx *fasthttp.RequestCtx) {
+	ctx.Response.Header.Set("Cache-Control", "max-age=31536000")
+}
+
+// setNoCacheHeaders sets the headers to avoid caching
+func setNoCacheHeaders(ctx *fasthttp.RequestCtx) {
 	ctx.Response.Header.Set("Pragma-Directive", "no-cache")
 	ctx.Response.Header.Set("Cache-Directive", "no-cache")
 	ctx.Response.Header.Set("Cache-Control", "no-store") // firefox ignores no-cache for this one
