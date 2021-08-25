@@ -47,7 +47,7 @@ input[type='file'] {
     cursor: pointer;
 }
 
-@media (max-width: 800px) {
+@media (orientation: portrait) {
     .output-img {
         max-width: 90%;
     }
@@ -67,7 +67,6 @@ input[type='file'] {
 
     .upload-button {
         grid-area: b;
-
     }
 
     .sign-in-button {
