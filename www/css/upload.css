@@ -53,6 +53,7 @@ input[type='file'] {
     }
 
     .main-form {
+        height: 0;
         display: grid;
         grid-template-columns: repeat(4, 145px);
         grid-template-rows: repeat(2, 55px);
