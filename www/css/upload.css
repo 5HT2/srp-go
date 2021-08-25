@@ -51,4 +51,28 @@ input[type='file'] {
     .output-img {
         max-width: 90%;
     }
+
+    .main-form {
+        display: grid;
+        grid-template-columns: repeat(4, 145px);
+        grid-template-rows: repeat(2, 55px);
+        grid-template-areas:
+            ". a b ."
+            ". c c .";
+    }
+
+    .browse-button-wrapper {
+        grid-area: a;
+    }
+
+    .upload-button {
+        grid-area: b;
+
+    }
+
+    .sign-in-button {
+        grid-area: c;
+        align-self: center;
+        justify-self: center;
+    }
 }
