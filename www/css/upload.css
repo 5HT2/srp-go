@@ -47,7 +47,7 @@ input[type='file'] {
     cursor: pointer;
 }
 
-@media (orientation: portrait) {
+@media (orientation: portrait), (max-width: 800px) {
     .output-img {
         max-width: 90%;
     }
