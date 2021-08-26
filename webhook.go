@@ -53,7 +53,8 @@ func PostMessage(ctx *fasthttp.RequestCtx, user ghUserResponse) {
 		embedSuccessColor,
 		author,
 		thumbnail,
-		fields}}}
+		fields,
+	}}}
 
 	json, err := json2.Marshal(message)
 
