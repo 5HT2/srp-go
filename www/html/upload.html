@@ -53,16 +53,29 @@
         }
 
         function onLoad() {
-            const queryString = window.location.search;
-            const urlParams = new URLSearchParams(queryString);
+            const formData = new FormData();
+            fetch('/api/auth/verify', {method: "POST", body: formData})
+                .then(data => {
+                    if (data.status === 200) { // Valid cookie
+                        setSignInButton('#5fc279', '#ffffff', null, 'github_white.svg', 'Signed In')
+                    } else if (data.status === 403) { // Invalid cookie
+                        setSignInButton('#c25f5f', '#ffffff', '/api/auth', 'github_white.svg', 'Invalid Cookie')
+                    } else if (data.status === 500 || data.status === 405) { // Server error
+                        console.log(data.status + " " + data.statusText)
+                        setSignInButton('#c25f5f', '#ffffff', '/api/auth', 'github_white.svg', 'Internal Error')
+                    } else { // No cookie
+                        setSignInButton('#e6e6e6', 'rgba(0,0,0,.8)', '/api/auth', 'github.svg', 'Sign In')
+                    }
+                })
+        }
 
-            if (urlParams.has('signed_in')) { // TODO: Switch this to using cookies
-                document.getElementById("sign-in-button").style.backgroundColor = '#5fc279';
-                document.getElementById("sign-in-button").style.color = '#ffffff';
-                document.getElementById("sign-in-button").onclick = null;
-                document.querySelector('#sign-in-button').innerHTML =
-                    '<img src="/svg/github_white.svg" alt="sign in with github button" class="button-icon"/>Signed In';
-            }
+        // Modify the button look. By default it's white with "Loading..."
+        function setSignInButton(backgroundColor, color, onclick, svg, buttonText) {
+            document.getElementById("sign-in-button").style.backgroundColor = backgroundColor;
+            document.getElementById("sign-in-button").style.color = color;
+            document.getElementById("sign-in-button").onclick = onclick;
+            document.querySelector('#sign-in-button').innerHTML =
+                '<img src="/svg/' + svg + '" alt="sign in with github button" class="button-icon"/>' + buttonText;
         }
     </script>
 </head>
@@ -98,7 +111,7 @@
             <div class="sign-in-button">
                 <button type="submit" id="sign-in-button" onclick="location.href='/api/auth'"
                         class="round-button pure-button" style="margin-right: 10px">
-                    <img src="/svg/github.svg" alt="sign in with github button" class="button-icon"/>Sign In
+                    <img src="/svg/github.svg" alt="github icon" class="button-icon"/>Loading...
                 </button>
             </div>
         </div>

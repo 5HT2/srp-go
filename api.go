@@ -15,6 +15,7 @@ import (
 var (
 	authPath         = "/api/auth"
 	authCallbackPath = "/api/auth/callback"
+	authVerifyPath   = "/api/auth/verify"
 	randomPath       = "/api/random"
 	uploadPath       = "/api/upload"
 
@@ -51,7 +52,7 @@ func HandleApi(ctx *fasthttp.RequestCtx) {
 			HandleWrongMethod(ctx)
 			return
 		}
-	case uploadPath:
+	case uploadPath, authVerifyPath:
 		if !ctx.IsPost() {
 			HandleWrongMethod(ctx)
 			return
@@ -65,6 +66,8 @@ func HandleApi(ctx *fasthttp.RequestCtx) {
 		handleAuth(ctx)
 	case authCallbackPath:
 		handleAuthCallback(ctx)
+	case authVerifyPath:
+		handleAuthVerify(ctx)
 	case randomPath:
 		handleRandom(ctx)
 	default:
@@ -134,15 +137,9 @@ func handleAuthCallback(ctx *fasthttp.RequestCtx) {
 	}
 
 	cookieBytes := ctx.Request.Header.Cookie(cookieName)
-	cookie := fasthttp.AcquireCookie()
-	err := cookie.ParseBytes(cookieBytes)
-	if err != nil {
-		HandleInternalServerError(ctx, "Error parsing cookie", err)
-		return
-	}
 
 	// Make sure their cookie state is the same one as returned by github
-	if !bytes.Equal(cookie.Cookie(), state) {
+	if !bytes.Equal(cookieBytes, state) {
 		HandleForbidden(ctx)
 		return
 	}
@@ -171,9 +168,20 @@ func handleAuthCallback(ctx *fasthttp.RequestCtx) {
 	}
 
 	//_, _ = fmt.Fprint(ctx, string(body)) // TODO: for debugging
-	ctx.Redirect("/upload?signed_in=true", fasthttp.StatusTemporaryRedirect) // TODO: Switch this to using cookies
+	ctx.Redirect("/upload", fasthttp.StatusTemporaryRedirect)
 	PostMessage(ctx, ghUser)
 	// TODO: implement webhook posting and "logged in page", this only prints the users information currently
+}
+
+// handleAuthVerify handles a request which is supposed to contain a Cookie header with an OAuth-State in it
+// and validates said cookie
+func handleAuthVerify(ctx *fasthttp.RequestCtx) {
+	cookieBytes := ctx.Request.Header.Cookie(cookieName)
+
+	if len(cookieBytes) == 0 {
+		HandleGeneric(ctx, fasthttp.StatusUnauthorized, "Not logged in!")
+	}
+	// TODO: Check for invalid cookie
 }
 
 func getGithubData(ctx *fasthttp.RequestCtx, accessToken string) ([]byte, error) {
@@ -239,7 +247,7 @@ func generateAuthCookie() (*fasthttp.Cookie, string) {
 	cookie.SetExpire(expiration)
 	cookie.SetHTTPOnly(true)
 	cookie.SetSameSite(fasthttp.CookieSameSiteLaxMode)
-	cookie.SetPath(authCallbackPath)
+	cookie.SetPath(authPath) // We want the cookie to be accessible by both /api/auth/callback and /api/auth/verify
 	return &cookie, state
 }
 
