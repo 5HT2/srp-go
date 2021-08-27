@@ -76,8 +76,7 @@ func InsertUser(user User) error {
 		Set("username = EXCLUDED.username").
 		Set("name = EXCLUDED.name").
 		Set("state = EXCLUDED.state").
-		Set("whitelisted = EXCLUDED.whitelisted").
-		Exec(ctx)
+		Exec(ctx) // We do not update the whitelisted state here because we want it to stay the same
 	return err
 }
 
