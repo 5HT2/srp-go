@@ -57,23 +57,22 @@
             fetch('/api/auth/verify', {method: "POST", body: formData})
                 .then(data => {
                     if (data.status === 200) { // Valid cookie
-                        setSignInButton('#5fc279', '#ffffff', null, 'github_white.svg', 'Signed In')
+                        setSignInButton('#5fc279', '#ffffff', 'github_white.svg', 'Signed In')
                     } else if (data.status === 403) { // Invalid cookie
-                        setSignInButton('#c25f5f', '#ffffff', '/api/auth', 'github_white.svg', 'Invalid Cookie')
+                        setSignInButton('#c25f5f', '#ffffff', 'github_white.svg', 'Invalid Cookie')
                     } else if (data.status === 500 || data.status === 405) { // Server error
                         console.log(data.status + " " + data.statusText)
-                        setSignInButton('#c25f5f', '#ffffff', '/api/auth', 'github_white.svg', 'Internal Error')
+                        setSignInButton('#c25f5f', '#ffffff', 'github_white.svg', 'Internal Error')
                     } else { // No cookie
-                        setSignInButton('#e6e6e6', 'rgba(0,0,0,.8)', '/api/auth', 'github.svg', 'Sign In')
+                        setSignInButton('#e6e6e6', 'rgba(0,0,0,.8)', 'github.svg', 'Sign In')
                     }
                 })
         }
 
         // Modify the button look. By default it's white with "Loading..."
-        function setSignInButton(backgroundColor, color, onclick, svg, buttonText) {
+        function setSignInButton(backgroundColor, color, svg, buttonText) {
             document.getElementById("sign-in-button").style.backgroundColor = backgroundColor;
             document.getElementById("sign-in-button").style.color = color;
-            document.getElementById("sign-in-button").onclick = onclick;
             document.querySelector('#sign-in-button').innerHTML =
                 '<img src="/svg/' + svg + '" alt="sign in with github button" class="button-icon"/>' + buttonText;
         }
