@@ -88,7 +88,7 @@ div.img {
   - [ ] Switch to webp for saving images
 - [ ] Finalize webhook support
 - [ ] Image attribution support
-- [ ] Sign In button broke
+- [x] Sign In button broke
 
 ## License
 
