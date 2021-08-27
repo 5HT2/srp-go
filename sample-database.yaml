@@ -1,0 +1,7 @@
+- model: User
+  rows:
+    - id: 01
+      username: admin
+      name: not a real user
+      state: '{{ now }}'
+      whitelisted: false

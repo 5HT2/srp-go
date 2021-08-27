@@ -18,13 +18,13 @@ import (
 )
 
 var (
-	ctx, db            = loadDatabase(databaseName)
+	ctx, db            = loadDatabase("config/", databaseName)
 	databaseName       = "database.yaml"
 	sampleDatabaseName = "sample-database.yaml"
 )
 
-// loadDatabase will load a new database from config/database.yaml or config/sample-database.yaml
-func loadDatabase(file string) (context.Context, *bun.DB) {
+// loadDatabase will load a new database from config/database.yaml or ./sample-database.yaml
+func loadDatabase(dir string, file string) (context.Context, *bun.DB) {
 	newCtx := context.Background()
 
 	sqlite, err := sql.Open(sqliteshim.ShimName, "file::memory:?cache=shared")
@@ -41,9 +41,10 @@ func loadDatabase(file string) (context.Context, *bun.DB) {
 
 	// Create tables and load initial data.
 	fixture := dbfixture.New(newDB, dbfixture.WithRecreateTables())
-	if err := fixture.Load(newCtx, os.DirFS("config/"), file); err != nil {
+	if err := fixture.Load(newCtx, os.DirFS(dir), file); err != nil {
 		if file != sampleDatabaseName { // prevent recursive loop
-			return loadDatabase(sampleDatabaseName)
+			log.Printf("- error loading '%s%s', defaulting to './%s', error: %v", dir, file, sampleDatabaseName, err)
+			return loadDatabase("./", sampleDatabaseName)
 		} else {
 			panic(err)
 		}
@@ -128,12 +129,13 @@ func saveDatabase() {
 }
 
 func (u User) String() string {
-	return fmt.Sprintf("User<%s, %v, %s, %v>", u.Name, u.ID, u.State, u.Whitelisted)
+	return fmt.Sprintf("User<%v, %s, %s, %s, %v>", u.ID, u.Username, u.Name, u.State, u.Whitelisted)
 }
 
 type User struct {
-	Name        string
 	ID          int
+	Username    string
+	Name        string
 	State       string
 	Whitelisted bool
 }

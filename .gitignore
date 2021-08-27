@@ -3,3 +3,4 @@ srp-go
 config/tmp/
 config/.env
 config/favicon.ico
+config/database.yaml

@@ -38,10 +38,11 @@ type ghAuthResponse struct {
 }
 
 type ghUserResponse struct {
+	Id        int    `json:"id"`
+	Username  string `json:"login"`
+	Name      string `json:"name"`
 	AvatarUrl string `json:"avatar_url"`
 	HtmlUrl   string `json:"html_url"`
-	Id        int    `json:"id"`
-	Name      string `json:"name"`
 }
 
 func HandleApi(ctx *fasthttp.RequestCtx) {
@@ -173,8 +174,9 @@ func handleAuthCallback(ctx *fasthttp.RequestCtx) {
 	PostMessage(ctx, ghUser)
 
 	user := User{
-		ghUser.Name,
 		ghUser.Id,
+		ghUser.Username,
+		ghUser.Name,
 		string(state),
 		false,
 	}
