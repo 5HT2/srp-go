@@ -18,14 +18,13 @@ import (
 )
 
 var (
-	ctx, db           = loadDatabase(customDatabaseDir)
-	sampleDatabaseDir = "sample/"
-	customDatabaseDir = "config/"
-	databaseName      = "database.yaml"
+	ctx, db            = loadDatabase(databaseName)
+	databaseName       = "database.yaml"
+	sampleDatabaseName = "sample-database.yaml"
 )
 
-// loadDatabase will load a new database from config/fixture.yaml
-func loadDatabase(dir string) (context.Context, *bun.DB) {
+// loadDatabase will load a new database from config/database.yaml or config/sample-database.yaml
+func loadDatabase(file string) (context.Context, *bun.DB) {
 	newCtx := context.Background()
 
 	sqlite, err := sql.Open(sqliteshim.ShimName, "file::memory:?cache=shared")
@@ -42,9 +41,9 @@ func loadDatabase(dir string) (context.Context, *bun.DB) {
 
 	// Create tables and load initial data.
 	fixture := dbfixture.New(newDB, dbfixture.WithRecreateTables())
-	if err := fixture.Load(newCtx, os.DirFS(dir), databaseName); err != nil {
-		if dir != sampleDatabaseDir { // prevent recursive loop
-			return loadDatabase(sampleDatabaseDir)
+	if err := fixture.Load(newCtx, os.DirFS("config/"), file); err != nil {
+		if file != sampleDatabaseName { // prevent recursive loop
+			return loadDatabase(sampleDatabaseName)
 		} else {
 			panic(err)
 		}
@@ -121,7 +120,7 @@ func saveDatabase() {
 		panic(err)
 	}
 
-	err = ioutil.WriteFile(customDatabaseDir+databaseName, data, fs.FileMode(0700))
+	err = ioutil.WriteFile("config/"+databaseName, data, fs.FileMode(0700))
 
 	if err != nil {
 		panic(err)
