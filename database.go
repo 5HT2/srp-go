@@ -9,7 +9,6 @@ import (
 	"github.com/uptrace/bun/dialect/sqlitedialect"
 	"github.com/uptrace/bun/driver/sqliteshim"
 	"github.com/uptrace/bun/extra/bundebug"
-	"github.com/valyala/fasthttp"
 	"gopkg.in/yaml.v2"
 	"io/fs"
 	"io/ioutil"
@@ -70,26 +69,12 @@ func GetUser(state string) *User {
 	return nil
 }
 
-// GetUserStatus will return the status code corresponding to the Cookie header validity
-func GetUserStatus(ctx *fasthttp.RequestCtx) (int, string) {
-	stateBytes := ctx.Request.Header.Cookie(cookieName)
-	if len(stateBytes) == 0 { // No cookie header
-		return fasthttp.StatusUnauthorized, "Not logged in!"
-	}
-
-	user := GetUser(string(stateBytes))
-	if user == nil { // A user with the state returned by the cookie was not found in the database
-		return fasthttp.StatusForbidden, "Invalid Cookie"
-	}
-
-	// else, we don't do anything if the user is found. The request will return 200
-	return 200, "Logged In"
-}
-
 // InsertUser will insert a new User, or overwrite an existing user with a matching id
 func InsertUser(user User) error {
 	_, err := db.NewInsert().Model(&user).On("CONFLICT (id) DO UPDATE").
 		Set("id = EXCLUDED.id").
+		Set("username = EXCLUDED.username").
+		Set("name = EXCLUDED.name").
 		Set("state = EXCLUDED.state").
 		Set("whitelisted = EXCLUDED.whitelisted").
 		Exec(ctx)
