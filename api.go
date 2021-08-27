@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/valyala/fasthttp"
 	"golang.org/x/oauth2"
+	"log"
 	"math/rand"
 	"strconv"
 	"time"
@@ -39,7 +40,7 @@ type ghAuthResponse struct {
 type ghUserResponse struct {
 	AvatarUrl string `json:"avatar_url"`
 	HtmlUrl   string `json:"html_url"`
-	Id        int64  `json:"id"`
+	Id        int    `json:"id"`
 	Name      string `json:"name"`
 }
 
@@ -125,7 +126,7 @@ func handleAuth(ctx *fasthttp.RequestCtx) {
 	ctx.Redirect(url, fasthttp.StatusTemporaryRedirect)
 }
 
-// handleAuthCallback handles the redirect after a successful auth from github
+// handleAuthCallback handles the redirect after a successful auth from GitHub, and creatures a User in the database
 func handleAuthCallback(ctx *fasthttp.RequestCtx) {
 	code := ctx.FormValue("code")
 	state := ctx.FormValue("state")
@@ -138,7 +139,7 @@ func handleAuthCallback(ctx *fasthttp.RequestCtx) {
 
 	cookieBytes := ctx.Request.Header.Cookie(cookieName)
 
-	// Make sure their cookie state is the same one as returned by github
+	// Make sure their cookie state is the same one as returned by GitHub
 	if !bytes.Equal(cookieBytes, state) {
 		HandleForbidden(ctx)
 		return
@@ -167,21 +168,43 @@ func handleAuthCallback(ctx *fasthttp.RequestCtx) {
 		return
 	}
 
-	//_, _ = fmt.Fprint(ctx, string(body)) // TODO: for debugging
+	// We have successfully authenticated with GitHub now... redirect back to the /upload page
 	ctx.Redirect("/upload", fasthttp.StatusTemporaryRedirect)
 	PostMessage(ctx, ghUser)
+
+	user := User{
+		ghUser.Name,
+		ghUser.Id,
+		string(state),
+		false,
+	}
+	err = InsertUser(user)
+	if err != nil {
+		log.Printf("- Failed to create new user: %v", err)
+		// TODO: Handle this in the bot
+	} else {
+		saveDatabase()
+	}
 	// TODO: implement webhook posting and "logged in page", this only prints the users information currently
 }
 
 // handleAuthVerify handles a request which is supposed to contain a Cookie header with an OAuth-State in it
-// and validates said cookie
-func handleAuthVerify(ctx *fasthttp.RequestCtx) {
-	cookieBytes := ctx.Request.Header.Cookie(cookieName)
-
-	if len(cookieBytes) == 0 {
+// and validates said cookie. Returns the user and whether it handled the request.
+func handleAuthVerify(ctx *fasthttp.RequestCtx) (*User, bool) {
+	stateBytes := ctx.Request.Header.Cookie(cookieName)
+	if len(stateBytes) == 0 { // No cookie header
 		HandleGeneric(ctx, fasthttp.StatusUnauthorized, "Not logged in!")
+		return nil, true
 	}
-	// TODO: Check for invalid cookie
+
+	user := GetUser(string(stateBytes))
+	if user == nil { // A user with the state returned by the cookie was not found in the database
+		HandleForbidden(ctx)
+		return nil, true
+	}
+
+	// else, we don't do anything if the user is found. The request will return 200
+	return user, false
 }
 
 func getGithubData(ctx *fasthttp.RequestCtx, accessToken string) ([]byte, error) {
@@ -247,14 +270,17 @@ func generateAuthCookie() (*fasthttp.Cookie, string) {
 	cookie.SetExpire(expiration)
 	cookie.SetHTTPOnly(true)
 	cookie.SetSameSite(fasthttp.CookieSameSiteLaxMode)
-	cookie.SetPath(authPath) // We want the cookie to be accessible by both /api/auth/callback and /api/auth/verify
+	cookie.SetPathBytes(apiPath) // We want the cookie to be accessible by /api/
 	return &cookie, state
 }
 
 // handleUpload handles uploading one file per request
 func handleUpload(ctx *fasthttp.RequestCtx) {
-	if *allowUpload != true {
-		HandleForbidden(ctx)
+	user, alreadyHandled := handleAuthVerify(ctx)
+	if alreadyHandled {
+		return
+	} else if user.Whitelisted != true {
+		HandleGeneric(ctx, fasthttp.StatusForbidden, "Not whitelisted!")
 		return
 	}
 

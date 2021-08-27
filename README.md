@@ -82,12 +82,13 @@ div.img {
 
 ## TODO:
 
-- [ ] Add authentication for uploading
+- [x] Add authentication for uploading
 - [ ] Add Discord embeds
 - [ ] Switch to a different prominent color library, because the current one doesn't support webp
   - [ ] Switch to webp for saving images
 - [ ] Finalize webhook support
 - [ ] Image attribution support
+- [ ] Sign In button broke
 
 ## License
 

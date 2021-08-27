@@ -9,6 +9,7 @@ import (
 	"github.com/uptrace/bun/dialect/sqlitedialect"
 	"github.com/uptrace/bun/driver/sqliteshim"
 	"github.com/uptrace/bun/extra/bundebug"
+	"github.com/valyala/fasthttp"
 	"gopkg.in/yaml.v2"
 	"io/fs"
 	"io/ioutil"
@@ -17,13 +18,14 @@ import (
 )
 
 var (
-	ctx, db            = loadDatabase(customDatabasePath)
-	sampleDatabasePath = "sample/database.yaml"
-	customDatabasePath = "config/database.yaml"
+	ctx, db           = loadDatabase(customDatabaseDir)
+	sampleDatabaseDir = "sample/"
+	customDatabaseDir = "config/"
+	databaseName      = "database.yaml"
 )
 
 // loadDatabase will load a new database from config/fixture.yaml
-func loadDatabase(path string) (context.Context, *bun.DB) {
+func loadDatabase(dir string) (context.Context, *bun.DB) {
 	newCtx := context.Background()
 
 	sqlite, err := sql.Open(sqliteshim.ShimName, "file::memory:?cache=shared")
@@ -40,9 +42,9 @@ func loadDatabase(path string) (context.Context, *bun.DB) {
 
 	// Create tables and load initial data.
 	fixture := dbfixture.New(newDB, dbfixture.WithRecreateTables())
-	if err := fixture.Load(newCtx, os.DirFS("config"), "fixture.yaml"); err != nil {
-		if path != sampleDatabasePath { // prevent recursive loop
-			return loadDatabase(sampleDatabasePath)
+	if err := fixture.Load(newCtx, os.DirFS(dir), databaseName); err != nil {
+		if dir != sampleDatabaseDir { // prevent recursive loop
+			return loadDatabase(sampleDatabaseDir)
 		} else {
 			panic(err)
 		}
@@ -54,18 +56,34 @@ func loadDatabase(path string) (context.Context, *bun.DB) {
 // GetUser will get a User with the provided state
 func GetUser(state string) *User {
 	// Select one user by their state key.
-	user1 := new(User)
+	user := new(User)
 	errored := false
-	fmt.Printf("user: %v", user1)
-	if err := db.NewSelect().Model(user1).Where("state = ?", state).Scan(ctx); err != nil {
+	fmt.Printf("user: %v", user)
+	if err := db.NewSelect().Model(user).Where("state = ?", state).Scan(ctx); err != nil {
 		errored = true
 		log.Printf("- Failed to find user with 'state' '%s'", state)
 	}
 
 	if !errored {
-		return user1
+		return user
 	}
 	return nil
+}
+
+// GetUserStatus will return the status code corresponding to the Cookie header validity
+func GetUserStatus(ctx *fasthttp.RequestCtx) (int, string) {
+	stateBytes := ctx.Request.Header.Cookie(cookieName)
+	if len(stateBytes) == 0 { // No cookie header
+		return fasthttp.StatusUnauthorized, "Not logged in!"
+	}
+
+	user := GetUser(string(stateBytes))
+	if user == nil { // A user with the state returned by the cookie was not found in the database
+		return fasthttp.StatusForbidden, "Invalid Cookie"
+	}
+
+	// else, we don't do anything if the user is found. The request will return 200
+	return 200, "Logged In"
 }
 
 // InsertUser will insert a new User, or overwrite an existing user with a matching id
@@ -103,7 +121,7 @@ func saveDatabase() {
 		panic(err)
 	}
 
-	err = ioutil.WriteFile(customDatabasePath, data, fs.FileMode(0700))
+	err = ioutil.WriteFile(customDatabaseDir+databaseName, data, fs.FileMode(0700))
 
 	if err != nil {
 		panic(err)
@@ -111,10 +129,11 @@ func saveDatabase() {
 }
 
 func (u User) String() string {
-	return fmt.Sprintf("User<%v, %s, %v>", u.ID, u.State, u.Whitelisted)
+	return fmt.Sprintf("User<%s, %v, %s, %v>", u.Name, u.ID, u.State, u.Whitelisted)
 }
 
 type User struct {
+	Name        string
 	ID          int
 	State       string
 	Whitelisted bool

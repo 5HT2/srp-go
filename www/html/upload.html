@@ -38,7 +38,7 @@
                         if (data.status === 201) {
                             alert("Successfully uploaded!")
                         } else {
-                            alert("Error when uploading: " + data.status + " " + data.statusText)
+                            alert("Error when uploading: " + data.status + " " + data.headers.get("X-Server-Message"))
                         }
                     })
             }
