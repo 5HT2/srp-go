@@ -163,7 +163,7 @@ func setup() {
 		RedirectURL:  liveUrl + "/api/auth/callback",
 		ClientID:     oauthClient,
 		ClientSecret: oauthSecret,
-		Scopes:       []string{"user:email"},
+		Scopes:       []string{""},
 		Endpoint:     github.Endpoint,
 	}
 }

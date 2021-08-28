@@ -45,7 +45,7 @@ You will want to
   - Or: `http://localhost:6060` for a testing environment
 - Set the Callback URL to your `LIVE_URL` + `/api/auth/callback`
 - Enable "Request user authorization (OAuth)"
-- Enable the Read-Only option for User Email addresses (aka `user:email`)
+- You do not need to enable permissions for anything
 
 Create a `.env` file inside your config folder, with the following format:
 ```bash
