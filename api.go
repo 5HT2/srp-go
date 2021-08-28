@@ -93,7 +93,7 @@ func handleDynamicCss(ctx *fasthttp.RequestCtx) {
 	image, color := GetRandomImage()
 
 	// this is probably the "easiest" way to do it without modifying html... use a dynamic @import stylesheet
-	ctx.Response.Header.SetContentType(jsonMime)
+	ctx.Response.Header.SetContentType(cssMime)
 	_, _ = fmt.Fprintf(ctx,
 		"body {\n    background-color: #%s;\n}\n\ndiv.img {\n    content: url('/images/%s');\n}\n",
 		color, image)
