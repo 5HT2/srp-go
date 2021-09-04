@@ -13,7 +13,7 @@ input[type='file'] {
     margin-top: 15px;
 }
 
-.output-img {
+.preview-img {
     margin-top: 15px;
     max-height: 80%;
     max-width: 33%;
@@ -48,10 +48,6 @@ input[type='file'] {
 }
 
 @media (orientation: portrait), (max-width: 800px) {
-    .output-img {
-        max-width: 90%;
-    }
-
     .main-form {
         height: 0;
         display: grid;
@@ -74,5 +70,10 @@ input[type='file'] {
         grid-area: c;
         align-self: center;
         justify-self: center;
+    }
+
+    .preview-img {
+        margin-top: 130px; /* 55px * 2 + 20 */
+        max-width: 90%;
     }
 }
