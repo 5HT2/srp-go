@@ -14,6 +14,13 @@ import (
 	"os"
 )
 
+// ImageData TODO: image attribution and author
+type ImageData struct {
+	ImageName string `json:"image_name"`
+	ImageUrl  string `json:"image_url"`
+	Color     string `json:"median_color"`
+}
+
 // MainImageColor calculates the median color of cropped image
 func MainImageColor(image string) string {
 	img, err := LoadImage(image)
@@ -44,11 +51,35 @@ func LoadImage(path string) (image.Image, error) {
 	return img, err
 }
 
+// GetAllImages TODO: Maybe we could also cache the creation of ImageData?
+// GetAllImages returns a slice of all images in the format of ImageData
+func GetAllImages() []ImageData {
+	images := make([]ImageData, 0)
+	for _, hash := range imageCache {
+		color := GetColor(hash)
+		imageData := ImageData{
+			ImageName: hash,
+			ImageUrl:  liveUrl + "/images/" + hash,
+			Color:     color,
+		}
+		images = append(images, imageData)
+	}
+
+	return images
+}
+
+// GetRandomImage TODO: Maybe we could also cache the creation of ImageData? As it is used for each request
 // GetRandomImage chooses a random image name from the image cache
-func GetRandomImage() (string, string) {
+func GetRandomImage() ImageData {
 	hash := imageCache[rGen.Intn(len(imageCache))]
 	color := GetColor(hash)
-	return hash, color
+
+	imageData := ImageData{
+		ImageName: hash,
+		ImageUrl:  liveUrl + "/images/" + hash,
+		Color:     color,
+	}
+	return imageData
 }
 
 // ImageHandler is our own RequestHandler with a CacheDuration of 0

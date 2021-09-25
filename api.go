@@ -17,6 +17,7 @@ var (
 	authPath         = "/api/auth"
 	authCallbackPath = "/api/auth/callback"
 	authVerifyPath   = "/api/auth/verify"
+	allPath          = "/api/all"
 	randomPath       = "/api/random"
 	uploadPath       = "/api/upload"
 
@@ -49,7 +50,7 @@ func HandleApi(ctx *fasthttp.RequestCtx) {
 	path := string(ctx.Path())
 
 	switch path {
-	case authPath, authCallbackPath, randomPath:
+	case authPath, authCallbackPath, randomPath, allPath:
 		if !ctx.IsGet() {
 			HandleWrongMethod(ctx)
 			return
@@ -72,6 +73,8 @@ func HandleApi(ctx *fasthttp.RequestCtx) {
 		handleAuthVerify(ctx)
 	case randomPath:
 		handleRandom(ctx)
+	case allPath:
+		handleJsonObject(ctx, GetAllImages())
 	default:
 		HandleNotFound(ctx)
 	}
@@ -84,31 +87,26 @@ func handleRandom(ctx *fasthttp.RequestCtx) {
 	if format == "css" {
 		handleDynamicCss(ctx)
 	} else {
-		handleRandomJson(ctx)
+		// returns the json form of a random image, usually displayed on the main page
+		handleJsonObject(ctx, GetRandomImage())
 	}
 }
 
 // handleDynamicCss returns the css to insert a random image with its background color onto the main page
 func handleDynamicCss(ctx *fasthttp.RequestCtx) {
-	image, color := GetRandomImage()
+	imageData := GetRandomImage()
 
 	// this is probably the "easiest" way to do it without modifying html... use a dynamic @import stylesheet
 	ctx.Response.Header.SetContentType(cssMime)
 	_, _ = fmt.Fprintf(ctx,
 		"body {\n    background-color: #%s;\n}\n\ndiv.img {\n    content: url('/images/%s');\n}\n",
-		color, image)
+		imageData.Color, imageData.ImageName)
 }
 
-// handleRandomJson returns the json form of a random image, usually displayed on the main page
-func handleRandomJson(ctx *fasthttp.RequestCtx) {
-	image, color := GetRandomImage()
-
+// handleJsonObject will print the raw json of v
+func handleJsonObject(ctx *fasthttp.RequestCtx, v interface{}) {
 	// TODO: image attribution and author
-	body := map[string]string{
-		"image_name":   image,
-		"image_url":    liveUrl + "/images/" + image,
-		"median_color": color}
-	json, err := json2.MarshalIndent(body, "", "    ")
+	json, err := json2.MarshalIndent(v, "", "    ")
 
 	if err != nil {
 		HandleInternalServerError(ctx, "Error formatting json", err)
