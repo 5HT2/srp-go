@@ -60,6 +60,8 @@ WEBHOOK_URL= # optional discord webhook url for posting specific events
 
 The full list of accessible API endpoints can be found inside [`api.go`](https://github.com/l1ving/srp-go/blob/master/api.go).
 
+The `/api/all` endpoint will give you a list of all available images, in the below json format.
+
 The `/api/random` endpoint will return the properties of a randomly-selected image in json (by default), like so:
 ```json
 {
