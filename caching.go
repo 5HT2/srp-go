@@ -11,8 +11,8 @@ import (
 )
 
 var (
-	imageColors  map[string]string // image hash, color hex
-	fileCache    = LoadAllCaches() // file path, file content
+	imageColors  = make(map[string]string, 0) // image hash, color hex
+	fileCache    = LoadAllCaches()            // file path, file content
 	imageCache   = LoadImageCache()
 	galleryCache = LoadGalleryCache()
 	faviconCache = LoadFaviconCache(customFaviconPath)
@@ -28,10 +28,6 @@ var (
 )
 
 func GetColor(image string) string {
-	if len(imageColors) == 0 { // TODO: we need some better way to handle this
-		imageColors = make(map[string]string, len(imageCache))
-	}
-
 	color := imageColors[image]
 
 	if len(color) == 0 {
