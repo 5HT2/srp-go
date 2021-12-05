@@ -25,7 +25,7 @@
         let file = null
 
         function updateClipboard() {
-            const text = `curl -i --cookie "OAuth-State=\\"COOKIE HERE\\"" -X POST ${location.protocol + '//' + location.host}/api/upload -F "file=@/home/user/file.jpg"`
+            const text = `curl --cookie "OAuth-State=\\"COOKIE HERE\\"" -X POST ${location.protocol + '//' + location.host}/api/upload -F "file=@/home/user/file.jpg"`
             navigator.clipboard.writeText(text).then(function() {
                 alert("CURL command copied!")
             }, function() {
