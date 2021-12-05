@@ -33,7 +33,7 @@ func loadDatabase(dir string, file string) (context.Context, *bun.DB) {
 	sqlite.SetMaxOpenConns(1)
 
 	newDB := bun.NewDB(sqlite, sqlitedialect.New())
-	newDB.AddQueryHook(bundebug.NewQueryHook(bundebug.WithVerbose()))
+	newDB.AddQueryHook(bundebug.NewQueryHook(bundebug.WithVerbose(true)))
 
 	// Register models for the fixture.
 	newDB.RegisterModel((*User)(nil))
