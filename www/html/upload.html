@@ -24,6 +24,15 @@
     <script>
         let file = null
 
+        function updateClipboard() {
+            const text = `curl -i --cookie "OAuth-State=\\"COOKIE HERE\\"" -X POST ${location.protocol + '//' + location.host}/api/upload -F "file=@/home/user/file.jpg"`
+            navigator.clipboard.writeText(text).then(function() {
+                alert("CURL command copied!")
+            }, function() {
+                alert("Missing permissions to write to clipboard!")
+            });
+        }
+
         function submitFile() {
             if (file === null) {
                 alert("You need to select a file first!")
@@ -107,6 +116,12 @@
                 <button type="submit" onclick="submitFile();"
                         class="round-button pure-button pure-button-primary">
                     <img src="/svg/upload.svg" alt="upload button" class="button-icon"/>Upload
+                </button>
+            </div>
+            <div class="curl-button">
+                <button style="display: block; width: 90%" type="submit" onclick="updateClipboard();"
+                        class="round-button pure-button pure-button-primary">
+                    <img src="/svg/terminal.svg" alt="curl button" class="button-icon button-icon-no-margin"/>
                 </button>
             </div>
             <div class="sign-in-button">

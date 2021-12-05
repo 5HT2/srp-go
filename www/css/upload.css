@@ -32,6 +32,10 @@ input[type='file'] {
     margin-right: 0.3em;
 }
 
+.button-icon-no-margin {
+    margin-right: 0
+}
+
 .browse-button-wrapper {
     position: relative;
     overflow: hidden;
@@ -70,6 +74,10 @@ input[type='file'] {
         grid-area: c;
         align-self: center;
         justify-self: center;
+    }
+
+    .curl-button {
+        display: none
     }
 
     .preview-img {
