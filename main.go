@@ -24,6 +24,7 @@ var (
 	maxImgLength = flag.Int("maximglength", 2000, "Maximum image height and width")
 	maxBodySize  = flag.Int("maxbodysize", 100*1024*1024, "MaxRequestBodySize, defaults to 100MiB")
 	debug        = flag.Bool("debug", false, "Enable debug logging")
+	removeBroken = flag.Bool("removebroken", false, "Remove broken images")
 
 	cssPath     = []byte("/css/")
 	svgPath     = []byte("/svg/")

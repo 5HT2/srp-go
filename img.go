@@ -25,6 +25,9 @@ type ImageData struct {
 func MainImageColor(image string) string {
 	img, err := LoadImage(image)
 	if nil != err {
+		if *removeBroken {
+			_ = os.Remove(image)
+		}
 		log.Fatalf("- Failed loading image %s - %s", image, err)
 		return ""
 	}
