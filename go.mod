@@ -1,4 +1,4 @@
-module github.com/l1ving/srp-go
+module github.com/5HT2/srp-go
 
 go 1.16
 

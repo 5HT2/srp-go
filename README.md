@@ -2,8 +2,8 @@
 
 [![time tracker](https://wakatime.com/badge/github/l1ving/srp-go.svg)](https://wakatime.com/badge/github/l1ving/srp-go)
 [![Docker Pulls](https://img.shields.io/docker/pulls/l1ving/srp-go?logo=docker&logoColor=white)](https://hub.docker.com/r/l1ving/srp-go)
-[![Docker Build](https://img.shields.io/github/workflow/status/l1ving/srp-go/docker-build?logo=docker&logoColor=white)](https://github.com/l1ving/srp-go/actions/workflows/docker-build.yml)
-[![CodeFactor](https://img.shields.io/codefactor/grade/github/l1ving/srp-go?logo=codefactor&logoColor=white)](https://www.codefactor.io/repository/github/l1ving/srp-go)
+[![Docker Build](https://img.shields.io/github/workflow/status/5HT2/srp-go/docker-build?logo=docker&logoColor=white)](https://github.com/5HT2/srp-go/actions/workflows/docker-build.yml)
+[![CodeFactor](https://img.shields.io/codefactor/grade/github/5HT2/srp-go?logo=codefactor&logoColor=white)](https://www.codefactor.io/repository/github/5HT2/srp-go)
 
 Serve a random image on [\<main page\>](https://frog.pics) with a dynamic background color, let users upload
 on [/upload](https://frog.pics/upload) and browse a gallery on [/browse](https://frog.pics/browse). Has (optional) image
@@ -16,7 +16,7 @@ Contributions are welcome and appreciated.
 To build:
 
 ```bash
-git clone git@github.com:l1ving/srp-go.git
+git clone git@github.com:5HT2/srp-go.git
 cd srp-go
 make
 ```
@@ -28,7 +28,7 @@ To run:
 ./srp-go -addr=localhost:6060 -debug=true
 ```
 
-I recommend deleting [`sample.jpg`](https://github.com/l1ving/srp-go/blob/master/config/images/sample.jpg)
+I recommend deleting [`sample.jpg`](https://github.com/5HT2/srp-go/blob/master/config/images/sample.jpg)
 after you have uploaded a few pictures. The sample file is there to prevent issues when first testing
 (needing an image to serve on `/`, to generate a sample color for, etc).
 
@@ -58,7 +58,7 @@ WEBHOOK_URL= # optional discord webhook url for posting specific events
 
 ## API
 
-The full list of accessible API endpoints can be found inside [`api.go`](https://github.com/l1ving/srp-go/blob/master/api.go).
+The full list of accessible API endpoints can be found inside [`api.go`](https://github.com/5HT2/srp-go/blob/master/api.go).
 
 The `/api/all` endpoint will give you a list of all available images, in the below json format.
 
@@ -94,8 +94,8 @@ div.img {
 
 ## License
 
-This project is licensed under [ISC](https://github.com/l1ving/srp-go/blob/master/LICENSE.md).
+This project is licensed under [ISC](https://github.com/5HT2/srp-go/blob/master/LICENSE.md).
 
-The [`sample.jpg`](https://github.com/l1ving/srp-go/blob/master/config/images/sample.jpg) file is licensed under
+The [`sample.jpg`](https://github.com/5HT2/srp-go/blob/master/config/images/sample.jpg) file is licensed under
 Creative Commons Attribution-Share Alike, you can find the original file
 [here](https://commons.wikimedia.org/wiki/File:Bufo_americanus_PJC1.jpg).
