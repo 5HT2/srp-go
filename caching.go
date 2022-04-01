@@ -118,7 +118,8 @@ func LoadImageCache() []string {
 	dirOpen, _ := os.Open(dir)
 	tmpImages, err := dirOpen.Readdir(0)
 	if err != nil {
-		panic(err)
+		log.Printf("failed to load image cache: %s\n", err)
+		return []string{}
 	}
 
 	var imageNames []string

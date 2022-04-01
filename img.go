@@ -26,9 +26,10 @@ func MainImageColor(image string) string {
 	img, err := LoadImage(image)
 	if nil != err {
 		if *removeBroken {
-			_ = os.Remove(image)
+			err = os.Remove(image)
+			log.Printf("failed to remove broken image: %s\n", err)
 		}
-		log.Fatalf("- Failed loading image %s - %s", image, err)
+		log.Printf("failed loading image %s: %s\n", image, err)
 		return ""
 	}
 
@@ -46,7 +47,7 @@ func MainImageColor(image string) string {
 func LoadImage(path string) (image.Image, error) {
 	imgBytes, err := ioutil.ReadFile(path)
 	if err != nil {
-		log.Fatalf("- Failed loading %s - %s", path, err)
+		log.Printf("failed loading %s: %s", path, err)
 		return nil, err
 	}
 
@@ -74,6 +75,15 @@ func GetAllImages() []ImageData {
 // GetRandomImage TODO: Maybe we could also cache the creation of ImageData? As it is used for each request
 // GetRandomImage chooses a random image name from the image cache
 func GetRandomImage() ImageData {
+	// rand.Intn panics if n <= 0.
+	if len(imageCache) <= 0 {
+		return ImageData{
+			ImageName: "null",
+			ImageUrl:  liveUrl + "/images/" + "null",
+			Color:     "000000",
+		}
+	}
+
 	hash := imageCache[rGen.Intn(len(imageCache))]
 	color := GetColor(hash)
 
