@@ -1,6 +1,6 @@
 module github.com/5HT2/srp-go
 
-go 1.18
+go 1.20
 
 require (
 	github.com/EdlinOrg/prominentcolor v1.0.0
