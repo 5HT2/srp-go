@@ -1,6 +1,6 @@
 # [srp-go](https://frog.pics)
 
-[![time tracker](https://wakatime.com/badge/github/l1ving/srp-go.svg)](https://wakatime.com/badge/github/l1ving/srp-go)
+[![time tracker](https://wakatime.com/badge/github/5HT2/srp-go.svg)](https://wakatime.com/badge/github/5HT2/srp-go)
 [![Docker Pulls](https://img.shields.io/docker/pulls/l1ving/srp-go?logo=docker&logoColor=white)](https://hub.docker.com/r/l1ving/srp-go)
 [![Docker Build](https://img.shields.io/github/actions/workflow/status/5HT2/srp-go/docker-build.yml?logo=docker&logoColor=white&branch=master)](https://github.com/5HT2/srp-go/actions/workflows/docker-build.yml)
 [![CodeFactor](https://img.shields.io/codefactor/grade/github/5HT2/srp-go?logo=codefactor&logoColor=white)](https://www.codefactor.io/repository/github/5HT2/srp-go)
