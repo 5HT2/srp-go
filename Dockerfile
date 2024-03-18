@@ -5,6 +5,7 @@ ARG LIBVIPS_VERSION=8.11.2
 RUN mkdir -p /srp-go/config
 ADD . /srp-go
 WORKDIR /srp-go
+RUN go env | grep GOROOT && ls -la "$(go env | grep GOROOT)"
 
 # Installs libvips + required libraries
 RUN DEBIAN_FRONTEND=noninteractive \
